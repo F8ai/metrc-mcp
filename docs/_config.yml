@@ -1,0 +1,7 @@
+# GitHub Pages - METRC MCP documentation
+title: METRC MCP
+description: MCP server and skills for METRC cannabis tracking API
+theme: jekyll-theme-cayman
+baseurl: /metrc-mcp
+exclude:
+  - MASTER_FRAMEWORK.md
