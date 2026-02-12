@@ -1,7 +1,8 @@
 /**
  * Vercel Edge: Chat endpoint using OpenRouter with METRC MCP tools.
  * POST body: { message: string, messages?: [], license_number?: string }
- * Uses OPENROUTER_API_KEY, OPENROUTER_MODEL (default: openai/gpt-4o), METRC_* for tools.
+ * OpenRouter key: from OPENROUTER_KEY_URL (Railway edge, rotated) or fallback OPENROUTER_API_KEY.
+ * METRC_* for tools.
  */
 
 export const config = { runtime: 'edge' };
@@ -18,9 +19,21 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-function getApiKey() {
+async function getApiKey() {
+  const keyUrl = process.env.OPENROUTER_KEY_URL;
+  if (keyUrl) {
+    const res = await fetch(keyUrl);
+    if (!res.ok) throw new Error(`OpenRouter key URL failed: ${res.status}`);
+    const body = await res.text();
+    try {
+      const j = JSON.parse(body);
+      return j.key ?? j.OPENROUTER_API_KEY ?? j.api_key ?? body;
+    } catch {
+      return body.trim();
+    }
+  }
   const key = process.env.OPENROUTER_API_KEY;
-  if (!key) throw new Error('OPENROUTER_API_KEY is required');
+  if (!key) throw new Error('OPENROUTER_API_KEY or OPENROUTER_KEY_URL is required');
   return key;
 }
 
@@ -61,7 +74,7 @@ export default async function handler(req) {
   }
 
   const tools = getOpenAITools();
-  const apiKey = getApiKey();
+  const apiKey = await getApiKey();
   const model = body.model || DEFAULT_MODEL;
 
   const requestMessages = [{ role: 'system', content: systemPrompt }, ...messages];

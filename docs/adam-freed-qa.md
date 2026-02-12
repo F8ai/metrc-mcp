@@ -7,6 +7,10 @@ layout: default
 
 This page records **questions from Adam Freed** and describes **how the METRC MCP can answer them**. Use the [Chat UI](chat/) or any MCP client (Cursor, Claude Desktop) with this server; ask the question in natural language and the model will call the right tools and return an answer. We add **example Q&A** below as we run them (ask in chat, paste answer here).
 
+**See live sandbox state:** [Sandbox view](/sandbox) — load facilities, pick one, then refresh to see its data. **Check other facilities** by switching the facility dropdown and clicking Refresh (e.g. Manufacturer has items, Cultivation has strains/locations; see [Sandbox view — Checking other facilities](sandbox-view#checking-other-facilities)).
+
+**Richer examples:** To get non-zero package/harvest data in the Colorado sandbox, run `npm run populate-simulated-year` (see [Sandbox view §11](sandbox-view#11-populate-scripts)); then re-ask in Chat and paste updated answers here.
+
 ---
 
 ## Note on these questions
@@ -35,8 +39,31 @@ Adam Freed’s questions are captured here so we can:
 8. **Where did this package come from? (traceability / harvest to package)**
 9. **Can we adjust [N] packages at once with the same reason and date?**
 10. **What harvests are active, and do we have flowering plants ready to harvest?**
+11. **What incoming or outgoing transfers do we have?**
+12. **What waste methods can we use for harvest or package waste?**
 
 *(Add more questions from Adam here as they’re shared.)*
+
+---
+
+## Quick prompts (copy into Chat)
+
+Use these as-is in the [Chat UI](chat/). Select a facility first (Load facilities, then pick one) so the model has a license to use.
+
+| # | Paste this in Chat |
+|---|--------------------|
+| 1 | What facilities do we have, and what’s the license number for the one we use for cultivation? |
+| 2 | What needs attention right now—compliance, expiring tags, or anything stuck? |
+| 3 | Give me a facility summary: what’s in the vault, what’s in progress, what’s ready to sell? |
+| 4 | What packages do we have, and can you show quantity and age? |
+| 5 | What should we pull for samples this week using oldest inventory first (FIFO)? |
+| 6 | Is there slow-moving or non-moving inventory we should look at? |
+| 7 | If we have an audit in a week, what’s the risk snapshot and what should we clean up? |
+| 8 | Where did this package come from? *(Replace with a real package label when you have one.)* |
+| 9 | Can we adjust multiple packages at once with the same reason and date? |
+| 10 | What harvests are active, and do we have flowering plants ready to harvest? |
+| 11 | What incoming or outgoing transfers do we have? |
+| 12 | What waste methods can we use for harvest or package waste? |
 
 ---
 
@@ -54,6 +81,8 @@ Adam Freed’s questions are captured here so we can:
 | Traceability (package → harvest) | Traces package back to harvest and harvest outputs. | Skill: [Traceability](skills#traceability); packages, harvests. |
 | Bulk adjust packages | Adjusts many packages in one call with same reason/date. | `metrc_bulk_adjust_packages` |
 | Active harvests & plants ready to harvest | Lists active harvests and flowering plants. | `metrc_get_harvests`, `metrc_get_plants_flowering` |
+| Incoming/outgoing transfers | Lists pending transfers for the facility. | `metrc_get_transfers_incoming`, `metrc_get_transfers_outgoing` |
+| Waste methods | Lists allowed waste methods for harvest/package waste. | `metrc_get_waste_methods` |
 
 Full tool list: [Tools](tools). Skill details: [Skills](skills).
 
@@ -175,12 +204,30 @@ So there are no harvests in progress and no plants ready to harvest. When presen
 
 ---
 
+### 11. Incoming and outgoing transfers
+
+**Q:** What incoming or outgoing transfers do we have?
+
+**A:** For **SF-SBX-CO-1-8002**, the MCP reports **0 incoming** and **0 outgoing** transfers. When transfers exist, the MCP uses `metrc_get_transfers_incoming` and `metrc_get_transfers_outgoing` to list them so you can see what’s pending or in transit.
+
+---
+
+### 12. Waste methods
+
+**Q:** What waste methods can we use for harvest or package waste?
+
+**A:** The MCP calls **`metrc_get_waste_methods`** (no license required). The Colorado sandbox returns allowed waste methods—e.g. **“Made it Unusable and Unrecognizable”** (ForPlants: true). Use the returned method **Id** and **Name** when recording harvest waste via `metrc_post_harvest_waste` or package waste tools.
+
+---
+
 *(Re-run these questions in [Chat](chat/) or Cursor to refresh answers as sandbox data changes.)*
 
 ---
 
 ## How to use this page
 
-- **Stakeholders (e.g. Adam):** See which questions are covered and what kind of answer to expect.
+- **Stakeholders (e.g. Adam):** Use the **Quick prompts** table to try questions in [Chat](chat/); see **Example answers** for the kind of answer to expect. Check [Sandbox view](/sandbox) for current facility data.
 - **Implementers:** Use the “How the MCP answers” table to map questions to tools/skills; add new rows for new questions.
 - **Content:** After each chat run, paste the assistant’s answer into the right example block so the page stays a living set of examples.
+
+For more product-framework Q&A (aging, reconciliation, compliance), see [Framework Q&A](framework-qa).

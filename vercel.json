@@ -1,6 +1,7 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/chat", "destination": "/chat.html" }
+    { "source": "/chat", "destination": "/chat.html" },
+    { "source": "/sandbox", "destination": "/sandbox.html" }
   ]
 }

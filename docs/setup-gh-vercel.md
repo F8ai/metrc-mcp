@@ -84,19 +84,26 @@ You’ll get a URL like `https://metrc-mcp.vercel.app` (or `https://metrc-mcp-*.
 
 **Option A – Vercel CLI**
 
-From the repo root (with `vercel` already linked):
+**One-shot setup (prompts for each secret):**
 
 ```bash
-# Required for /api/chat — paste key when prompted, then select Production (and Preview if desired)
-vercel env add OPENROUTER_API_KEY
+./scripts/setup-vercel.sh
+```
+
+Or run the steps yourself from the repo root (with `vercel` already linked):
+
+```bash
+# OpenRouter: prefer Railway edge URL (returns rotated key); else paste key
+vercel env add OPENROUTER_KEY_URL production
+# or: vercel env add OPENROUTER_API_KEY production
 
 # Required for METRC tools (chat + MCP / Load facilities)
-vercel env add METRC_VENDOR_API_KEY
-vercel env add METRC_USER_API_KEY
+vercel env add METRC_VENDOR_API_KEY production
+vercel env add METRC_USER_API_KEY production
 
 # Optional
-vercel env add OPENROUTER_MODEL
-vercel env add METRC_API_URL
+vercel env add OPENROUTER_MODEL production
+vercel env add METRC_API_URL production
 ```
 
 Redeploy so new env vars are used:
@@ -114,7 +121,8 @@ To list vars: `vercel env ls`. To pull into a local file: `vercel env pull .env.
 
 | Name | Value | Environments |
 |------|--------|--------------|
-| `OPENROUTER_API_KEY` | your OpenRouter key | Production, Preview |
+| `OPENROUTER_KEY_URL` | Railway edge URL that returns current OpenRouter key (preferred; we rotate keys) | Production, Preview |
+| `OPENROUTER_API_KEY` | OpenRouter key (fallback if OPENROUTER_KEY_URL not set) | Production, Preview |
 | `METRC_VENDOR_API_KEY` | your METRC vendor key | Production, Preview |
 | `METRC_USER_API_KEY` | your METRC user key | Production, Preview |
 | `OPENROUTER_MODEL` | e.g. `openai/gpt-4o` | optional |

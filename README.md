@@ -106,7 +106,7 @@ The client can pass that text to the LLM as context, then the LLM calls the METR
 
 ## Chat and MCP on Vercel Edge
 
-**Setup:** See **[Setup with GitHub and Vercel](https://f8ai.github.io/metrc-mcp/setup-gh-vercel)** for step-by-step use of `gh` and `vercel` (Pages + API + env vars).
+**Setup:** Set OPENROUTER_API_KEY and METRC_* in the Vercel project (Settings → Environment Variables), then run **`./scripts/setup-vercel.sh`** to deploy. See **[Setup with GitHub and Vercel](https://f8ai.github.io/metrc-mcp/setup-gh-vercel)** for full steps.
 
 The repo includes **Vercel Edge** endpoints so you can host a chat UI and the METRC MCP over HTTP:
 
@@ -115,13 +115,13 @@ The repo includes **Vercel Edge** endpoints so you can host a chat UI and the ME
 | **`POST /api/chat`** | Chat with OpenRouter (default model: `openai/gpt-4o`). The model has access to all METRC tools; when it calls a tool, the Edge runs it and returns the result. Body: `{ "message": "List my facilities" }` or `{ "messages": [...] }`. |
 | **`POST /api/mcp`** | MCP-over-HTTP: JSON-RPC `tools/list` and `tools/call` so any client can list and invoke METRC tools. |
 
-**Chat UI:** After deploy, open **`https://your-project.vercel.app/chat.html`** (or **`/chat`**). The page is in `public/` and is served by Vercel; API URL defaults to the same origin. Use the facility dropdown and send messages.
+**Chat UI:** After deploy, open **`https://your-project.vercel.app/chat`** (or `/chat.html`). API URL defaults to the same origin; use the facility dropdown and send messages. **Sandbox view:** **`/sandbox`** (or `/sandbox.html`) to inspect facilities, locations, strains, items, harvests, and packages for the selected facility.
 
 **Deploy:** Connect the repo to Vercel; the `api/` and `lib/` files deploy as Edge (see `export const config = { runtime: 'edge' }` in `api/chat.js` and `api/mcp.js`).
 
 **Environment variables (Vercel project settings or `.env`):**
 
-- **Chat (OpenRouter):** `OPENROUTER_API_KEY` (required for `/api/chat`). Optional: `OPENROUTER_MODEL` (e.g. `openai/gpt-4o` or `openai/gpt-oss-120b` if available on OpenRouter).
+- **Chat (OpenRouter):** Prefer `OPENROUTER_KEY_URL` (Railway edge URL that returns the current key; we rotate keys). Else `OPENROUTER_API_KEY`. Optional: `OPENROUTER_MODEL` (e.g. `openai/gpt-4o`).
 - **METRC (same as stdio server):** `METRC_API_URL` (default `https://sandbox-api-co.metrc.com`), `METRC_VENDOR_API_KEY`, `METRC_USER_API_KEY`.
 
 Example chat request:
@@ -160,7 +160,9 @@ To seed the Colorado sandbox with 12 strains and a full seed-to-sale flow (plant
 npm run populate-sandbox
 ```
 
-Requires `.env` with `METRC_VENDOR_API_KEY` and `METRC_USER_API_KEY`. The script will create strains (SBX Strain 1–12), run sandbox setup, create a plant-capable location if the sandbox offers one, create plantings and move them to flowering, create harvests, create items and packages, and finish packages. If the sandbox has no location type with `ForPlants: true`, plantings are skipped; you still get strains and can create standalone packages if the API allows.
+Requires a `.env` in the repo root with `METRC_VENDOR_API_KEY` and `METRC_USER_API_KEY` (copy from `.env.example` and add your METRC sandbox keys). The script will create strains (SBX Strain 1–12), run sandbox setup, create a plant-capable location if the sandbox offers one, create plantings and move them to flowering, create harvests, create items and packages, and finish packages. If the sandbox has no location type with `ForPlants: true`, plantings are skipped; you still get strains and can create standalone packages if the API allows.
+
+**Simulated year (full lifecycle):** To populate with ~12 months of backdated data (harvest waste, finish harvests, lab types, finish packages, optional adjust), run `npm run populate-simulated-year`. See [Sandbox view — §11 Populate scripts](docs/sandbox-view.md#11-populate-scripts).
 
 ## Test
 

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>METRC Sandbox View</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+    label { color: var(--muted); font-size: 0.85rem; }
+    select, input[type="url"] {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      min-width: 200px;
+    }
+    input[type="url"] { min-width: 280px; }
+    button {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    #status { color: var(--muted); font-size: 0.9rem; margin-left: 0.5rem; }
+    .error { color: #f85149; }
+    section.sandbox-section {
+      margin-top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    section.sandbox-section h2 {
+      margin: 0;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.2);
+    }
+    .section-body { padding: 1rem; overflow-x: auto; }
+    .section-body.empty { color: var(--muted); font-size: 0.9rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    th { color: var(--muted); font-weight: 500; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    .count { color: var(--muted); font-size: 0.8rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sandbox View</h1>
+    <a href="/chat">Chat</a>
+    <span style="color: var(--muted); font-size: 0.85rem;">Switch facility and click Refresh to see other licenses.</span>
+    <label for="apiBase">API URL</label>
+    <input type="url" id="apiBase" placeholder="https://your-app.vercel.app" />
+    <label for="facility">Facility</label>
+    <select id="facility">
+      <option value="">— Select facility —</option>
+    </select>
+    <button type="button" id="loadFacilities">Load facilities</button>
+    <button type="button" id="refresh" class="secondary" disabled>Refresh data</button>
+    <span id="status"></span>
+  </header>
+
+  <section class="sandbox-section" id="section-locations">
+    <h2>Locations <span class="count" id="count-locations"></span></h2>
+    <div class="section-body" id="body-locations">Select a facility and click Refresh data.</div>
+  </section>
+  <section class="sandbox-section" id="section-strains">
+    <h2>Strains <span class="count" id="count-strains"></span></h2>
+    <div class="section-body" id="body-strains"></div>
+  </section>
+  <section class="sandbox-section" id="section-items">
+    <h2>Items <span class="count" id="count-items"></span></h2>
+    <div class="section-body" id="body-items"></div>
+  </section>
+  <section class="sandbox-section" id="section-harvests">
+    <h2>Harvests <span class="count" id="count-harvests"></span></h2>
+    <div class="section-body" id="body-harvests"></div>
+  </section>
+  <section class="sandbox-section" id="section-packages">
+    <h2>Packages <span class="count" id="count-packages"></span></h2>
+    <div class="section-body" id="body-packages"></div>
+  </section>
+
+  <script>
+    const apiBaseInput = document.getElementById('apiBase');
+    const facilitySelect = document.getElementById('facility');
+    const loadFacilitiesBtn = document.getElementById('loadFacilities');
+    const refreshBtn = document.getElementById('refresh');
+    const statusEl = document.getElementById('status');
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('api')) apiBaseInput.value = params.get('api');
+    else if (localStorage.getItem('metrcSandboxApi')) apiBaseInput.value = localStorage.getItem('metrcSandboxApi');
+    else apiBaseInput.value = window.location.origin;
+    apiBaseInput.addEventListener('change', function() { localStorage.setItem('metrcSandboxApi', apiBaseInput.value); });
+
+    function setStatus(msg, isError) {
+      statusEl.textContent = msg;
+      statusEl.className = isError ? 'error' : '';
+    }
+
+    async function getApiBase() {
+      const base = (apiBaseInput.value || '').trim().replace(/\/$/, '');
+      if (!base) {
+        setStatus('Set API URL (e.g. ' + window.location.origin + ')', true);
+        return null;
+      }
+      return base;
+    }
+
+    async function callTool(name, args) {
+      const base = await getApiBase();
+      if (!base) return null;
+      const res = await fetch(base + '/api/mcp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name, arguments: args || {} },
+        }),
+      });
+      const data = await res.json();
+      const content = data.result && data.result.content && data.result.content[0] && data.result.content[0].text;
+      if (data.result && data.result.isError) throw new Error(content || 'Tool error');
+      if (typeof content === 'string' && content.trim().startsWith('Error:')) throw new Error(content);
+      if (!content) throw new Error(data.error && data.error.message || 'No response');
+      try {
+        return typeof content === 'string' ? JSON.parse(content) : content;
+      } catch (_) {
+        return content;
+      }
+    }
+
+    function extractData(raw) {
+      if (Array.isArray(raw)) return raw;
+      if (raw && typeof raw === 'object' && Array.isArray(raw.Data)) return raw.Data;
+      if (raw && typeof raw === 'object' && Array.isArray(raw.data)) return raw.data;
+      return [];
+    }
+
+    function renderTable(rows, columns) {
+      if (!rows || rows.length === 0) return '<p class="empty">No data</p>';
+      const cols = columns || (rows[0] && typeof rows[0] === 'object' ? Object.keys(rows[0]).filter(k => k !== 'Id' && k !== 'LocationId') : []);
+      let html = '<table><thead><tr>';
+      cols.forEach(c => { html += '<th>' + c.replace(/([A-Z])/g, ' $1').trim() + '</th>'; });
+      html += '</tr></thead><tbody>';
+      rows.forEach(row => {
+        html += '<tr>';
+        cols.forEach(c => {
+          let v = row[c];
+          if (v === null || v === undefined) v = '';
+          else if (typeof v === 'object') v = JSON.stringify(v);
+          html += '<td>' + String(v) + '</td>';
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      return html;
+    }
+
+    loadFacilitiesBtn.addEventListener('click', async function() {
+      const base = await getApiBase();
+      if (!base) return;
+      setStatus('Loading facilities…');
+      loadFacilitiesBtn.disabled = true;
+      try {
+        const raw = await callTool('metrc_get_facilities', {});
+        const facilities = extractData(raw);
+        facilitySelect.innerHTML = '<option value="">— Select facility —</option>';
+        facilities.forEach(function(f) {
+          const license = (f.License && f.License.Number) || f.license_number || f.LicenseNumber || '';
+          const name = f.Name || f.name || license;
+          const opt = document.createElement('option');
+          opt.value = license;
+          opt.textContent = name + (license ? ' (' + license + ')' : '');
+          facilitySelect.appendChild(opt);
+        });
+        setStatus('Loaded ' + facilities.length + ' facilities');
+        refreshBtn.disabled = !facilitySelect.value;
+      } catch (e) {
+        setStatus('Failed: ' + e.message, true);
+      }
+      loadFacilitiesBtn.disabled = false;
+    });
+
+    facilitySelect.addEventListener('change', function() {
+      refreshBtn.disabled = !facilitySelect.value;
+      if (!facilitySelect.value) {
+        ['locations', 'strains', 'items', 'harvests', 'packages'].forEach(id => {
+          document.getElementById('count-' + id).textContent = '';
+          document.getElementById('body-' + id).innerHTML = id === 'locations' ? 'Select a facility and click Refresh data.' : '';
+          document.getElementById('body-' + id).className = 'section-body' + (id === 'locations' ? '' : ' empty');
+        });
+      }
+    });
+
+    const SECTIONS = [
+      { id: 'locations', tool: 'metrc_get_locations', columns: ['Name', 'LocationTypeName', 'ForPlants', 'ForPackages', 'ForHarvests'] },
+      { id: 'strains', tool: 'metrc_get_strains', columns: ['Name', 'TestingStatus', 'ThcLevel', 'CbdLevel'] },
+      { id: 'items', tool: 'metrc_get_items', columns: ['Name', 'ItemCategory', 'UnitOfMeasure', 'StrainName'] },
+      { id: 'harvests', tool: 'metrc_get_harvests', columns: ['Name', 'HarvestDate', 'DryingLocationName', 'TotalWetWeight', 'Status'] },
+      { id: 'packages', tool: 'metrc_get_packages', columns: ['Label', 'PackageCategoryName', 'Quantity', 'UnitOfMeasureName', 'ProductName', 'PackagedDate', 'IsFinished'] },
+    ];
+
+    refreshBtn.addEventListener('click', async function() {
+      const license = facilitySelect.value;
+      if (!license) return;
+      const base = await getApiBase();
+      if (!base) return;
+      setStatus('Loading sandbox data…');
+      refreshBtn.disabled = true;
+      const args = { license_number: license };
+      for (const { id, tool, columns } of SECTIONS) {
+        const countEl = document.getElementById('count-' + id);
+        const bodyEl = document.getElementById('body-' + id);
+        try {
+          const raw = await callTool(tool, args);
+          const rows = extractData(raw);
+          countEl.textContent = '(' + rows.length + ')';
+          bodyEl.innerHTML = renderTable(rows, columns);
+          bodyEl.className = 'section-body';
+        } catch (e) {
+          countEl.textContent = '';
+          bodyEl.innerHTML = '<p class="empty error">' + e.message + '</p>';
+          bodyEl.className = 'section-body empty';
+        }
+      }
+      setStatus('Done');
+      refreshBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

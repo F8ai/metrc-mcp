@@ -18,6 +18,19 @@ A single reference for everything in the **Colorado METRC sandbox**: what exists
 | **Facilities** | Multiple (Cultivation, Manufacturer, Store, etc.) | [metrc_get_facilities](tools#facility--reference-no-or-single-license) | Every skill needs `license_number`; get it here. |
 | **License number** | e.g. `SF-SBX-CO-1-8002` | Same | Pass to all facility-scoped tools. |
 
+### Checking other facilities
+
+The sandbox has **28 facilities** (SF-SBX-CO-1-8002 through SF-SBX-CO-28-8002). Data varies by type:
+
+| Type (example) | License | Typical data |
+|----------------|--------|--------------|
+| **Accelerator Cultivation** | SF-SBX-CO-1-8002 | Strains, locations (e.g. harvest-capable), plants, harvests. Use for seed-to-sale and [populate script](#11-populate-scripts). |
+| **Accelerator Manufacturer** | SF-SBX-CO-2-8002 | Strains, **items** (e.g. Metered Dose Inhaler, Vaporizer/Cartridge). No harvests (harvests API returns 401 for non-cultivation). |
+| **Accelerator Store** | SF-SBX-CO-3-8002 | Strains, **items** (e.g. Vaporizer/Cartridge). No harvests. |
+| **Others** | SF-SBX-CO-4 through 28 | Varies; many have items, 0 packages/harvests until data is created or transferred. |
+
+Use the [Sandbox view](/sandbox) UI: **Load facilities**, pick a facility, then **Refresh data** to see locations, strains, items, harvests, and packages for that license. For Chat and Adam Freed Q&A, select the facility whose data you want to query.
+
 ---
 
 ## 2. Reference data (no or single license)
@@ -125,20 +138,41 @@ Flow in the sandbox and where to use tools/skills:
 | **4. Harvest** | Harvest flowering plants | [metrc_get_plants_flowering](tools#read-packages-harvests-plants) · [metrc_harvest_plants](tools#harvests-create-and-manage) | — |
 | **5. Package** | Create packages from harvest | [metrc_get_items](tools#read-facilities-strains-items-locations) · [metrc_get_tags_package_available](tools#tags--employees) · [metrc_create_harvest_packages](tools#packages-create-and-manage) | — |
 | **6. Sale-ready** | Finish packages | [metrc_finish_package](tools#packages-create-and-manage) · [metrc_bulk_finish_packages](tools#packages-create-and-manage) | — |
+| **7. Optional** | Harvest waste, finish harvests, lab types, adjust packages | [metrc_post_harvest_waste](tools#harvests-create-and-manage) · [metrc_finish_harvest](tools#harvests-create-and-manage) · [metrc_get_lab_test_types](tools#transfers-items-strains-lab-processing) · [metrc_adjust_package](tools#packages-create-and-manage) | — |
 | **Ongoing** | Query and analyze | All read tools | [Facility summary](skills#skill-list) · [Needs attention](skills#skill-list) · [Audit-ready](skills#skill-list) · [FIFO](skills#skill-list) · [Fragmentation](skills#skill-list) · [Sample-out](skills#skill-list) · [Traceability](skills#skill-list) · [Inventory summary](skills#skill-list) |
 
 ---
 
-## 11. Populate script
+## 11. Populate scripts
 
-The repo includes a script that seeds the Colorado sandbox with **12 strains** and a full lifecycle (plantings → flowering → harvest → packages → finish) where the API allows:
+### populate-sandbox
+
+Seeds the Colorado sandbox with **12 strains** and a full lifecycle (plantings → flowering → harvest → packages → finish) where the API allows:
 
 - **Run:** `npm run populate-sandbox` (see [README](https://github.com/F8ai/metrc-mcp#populate-sandbox-full-lifecycle)).
 - **Requires:** `.env` with `METRC_VENDOR_API_KEY` and `METRC_USER_API_KEY`.
 - **Creates:** Strains (SBX Strain 1–12), optional plant location, plantings (if ForPlants location exists), harvest(s), item(s), packages, and finishes packages.
 - **Limits:** If the sandbox has no location type with **ForPlants: true**, plantings are skipped; you still get strains and items (and standalone packages if the API allows).
 
-After running, use [metrc_get_facilities](tools#facility--reference-no-or-single-license), [metrc_get_strains](tools#read-facilities-strains-items-locations), [metrc_get_harvests](tools#read-packages-harvests-plants), [metrc_get_packages](tools#read-packages-harvests-plants) to inspect the sandbox.
+### populate-simulated-year (full lifecycle in simulated time)
+
+Runs the **entire seed-to-sale lifecycle** with backdated dates over ~52 weeks so the sandbox has a year of data:
+
+- **Run:** `npm run populate-simulated-year`
+- **Requires:** Same `.env`; optional `METRC_LICENSE` (default `SF-SBX-CO-1-8002`). Enough **plant tags** and **package tags** in the sandbox (run sandbox setup or populate-sandbox first if needed).
+- **Steps (in order):**  
+  1. Sandbox setup → strains → locations (plant + harvest/drying)  
+  2. **Grow:** 12 cycles, each: Seed → plants (plantings) → vegetative → flowering → harvest (all backdated)  
+  3. Items (product catalog)  
+  4. Packages from harvests (process harvest → packaged product)  
+  5. Harvest waste (record 0.1 oz on one harvest)  
+  6. Finish harvests (processing complete)  
+  7. Lab (fetch lab test types)  
+  8. Finish packages (ready for sale)  
+  9. Optional: adjust one package (e.g. sample)
+- Use [metrc_get_harvests](tools#read-packages-harvests-plants), [metrc_get_packages](tools#read-packages-harvests-plants), [metrc_get_harvests_inactive](tools#read-packages-harvests-plants), [metrc_get_packages_inactive](tools#read-packages-harvests-plants) to inspect the result.
+
+After either script, use [metrc_get_facilities](tools#facility--reference-no-or-single-license), [metrc_get_strains](tools#read-facilities-strains-items-locations), [metrc_get_harvests](tools#read-packages-harvests-plants), [metrc_get_packages](tools#read-packages-harvests-plants) to inspect the sandbox.
 
 ---
 

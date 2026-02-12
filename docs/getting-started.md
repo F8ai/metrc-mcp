@@ -39,7 +39,7 @@ In Cursor: **Settings → MCP** (or `.cursor/mcp.json`):
 }
 ```
 
-To pass keys via config instead of `.env`:
+To pass keys via config instead of `.env`, add an `env` block to the server entry. **Scripts** (e.g. `npm run populate-simulated-year`) also read from MCP config: they try `.env` first, then `.cursor/mcp.json` in the repo, then `~/.cursor/mcp.json`.
 
 ```json
 {
