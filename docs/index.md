@@ -17,6 +17,8 @@ MCP (Model Context Protocol) server that exposes **METRC** cannabis tracking API
 | [**Tools**](tools) | All MCP tools (50+) by category |
 | [**Skills**](skills) | Analysis skills (needs-attention, facility summary, audit snapshot, FIFO, etc.) and MCP resource URIs |
 | [**Master Framework**](framework) | Product/feature framework mapped to MCP capabilities (bulk, aging, compliance, yield, reports, etc.) |
+| [**Framework Q&A**](framework-qa) | Example questions and expected answers for each framework item (demos, testing) |
+| [**Sandbox view**](sandbox-view) | Colorado sandbox: everything referenced and cross-linked (entities, lifecycle, tools, skills) |
 
 ---
 

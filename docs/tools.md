@@ -101,6 +101,9 @@ All tools require the METRC MCP server to be connected. Most facility-scoped too
 | `metrc_change_package_location` | Change package location |
 | `metrc_finish_package` | Finish package (available for sale) |
 | `metrc_unfinish_package` | Unfinish package |
+| `metrc_bulk_adjust_packages` | Adjust multiple packages in one call (license_number, adjustments array) |
+| `metrc_bulk_finish_packages` | Finish multiple packages (license_number, actual_date, labels array) |
+| `metrc_bulk_change_package_location` | Change location for multiple packages (license_number, moves array) |
 
 ---
 

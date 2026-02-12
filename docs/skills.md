@@ -24,6 +24,11 @@ Skills are available in two ways:
 | **Inventory summary** | “What’s in inventory?”, “By location/strain?”, aging stock | `metrc://skills/inventory-summary` | §3 Inventory intelligence |
 | **Audit-ready snapshot** | “Audit in a week — check risk areas”, compliance health check | `metrc://skills/audit-ready-snapshot` | **§9.1** Audit-ready snapshots |
 | **FIFO / aging pull** | “What to pull for samples/vendor days/discounting?”, FIFO list | `metrc://skills/fifo-aging-pull` | **§2.1** Intelligent FIFO / aging pull |
+| **Fragmentation detection** | "Show fragmentation?", multiple partials per item | `metrc://skills/fragmentation-detection` | **§7.1** Partial package fragmentation |
+| **Sample-out low counts** | "Which low-count packages to sample out?" | `metrc://skills/sample-out-low-counts` | **§7.3** Sample-out for sales enablement |
+| **Slow-moving inventory** | "Slow-moving or non-moving inventory?" | `metrc://skills/slow-moving-inventory` | **§3.1** Slow / non-moving detection |
+| **Aging discount/sampling** | "Approaching age limits?", "Best for discount/sampling?" | `metrc://skills/aging-discount-sampling` | **§2.2** Aging discount / sampling |
+| **Package consolidation** | "Consolidate packages?", "Re-sticker or combine?" | `metrc://skills/package-consolidation` | **§7.2** Package consolidation |
 | **Skills index** | List of all skills and how to use them | `metrc://skills/README` | — |
 
 ---
@@ -45,9 +50,9 @@ The [Master Function & Feature Framework](framework) defines 14 feature areas. S
 |-------------------|----------------------------|
 | **§1** Bulk & efficiency | Tools support array payloads; “Bulk actions” skill pattern in framework. |
 | **§2.1** FIFO / aging pull | **Skill:** [FIFO / aging pull](skills#skill-list) (`metrc://skills/fifo-aging-pull`) |
-| **§2.2** Aging discount / sampling | Use inventory summary + package/harvest dates; app for thresholds. |
-| **§3** Inventory intelligence | **Skill:** Inventory summary; slow-moving can be added as skill. |
-| **§7** Package optimization | Fragmentation / consolidation / sample-out can be added as skills (packages + logic). |
+| **§2.2** Aging discount / sampling | **Skill:** [Aging discount/sampling](skills#skill-list) (`metrc://skills/aging-discount-sampling`) |
+| **§3** Inventory intelligence | **Skill:** Inventory summary; **Skill:** [Slow-moving inventory](skills#skill-list) (`metrc://skills/slow-moving-inventory`) |
+| **§7** Package optimization | **Skill:** [Fragmentation detection](skills#skill-list), [Package consolidation](skills#skill-list), [Sample-out low counts](skills#skill-list) |
 | **§9.1** Audit-ready snapshots | **Skill:** [Audit-ready snapshot](skills#skill-list) (`metrc://skills/audit-ready-snapshot`) |
 | **§9.2** Employee self-audit | App for attribution; skill possible if action history available. |
 | **§13** Custom reports | LLM + tools = ad-hoc reports; see framework for GUI report builder. |
