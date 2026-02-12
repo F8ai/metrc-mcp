@@ -84,18 +84,19 @@ You’ll get a URL like `https://metrc-mcp.vercel.app` (or `https://metrc-mcp-*.
 
 **Option A – Vercel CLI**
 
-```bash
-# Required for /api/chat
-vercel env add OPENROUTER_API_KEY
-# Paste your OpenRouter key when prompted; choose Production (and Preview if you want)
+From the repo root (with `vercel` already linked):
 
-# Required for METRC tools (chat + MCP)
+```bash
+# Required for /api/chat — paste key when prompted, then select Production (and Preview if desired)
+vercel env add OPENROUTER_API_KEY
+
+# Required for METRC tools (chat + MCP / Load facilities)
 vercel env add METRC_VENDOR_API_KEY
 vercel env add METRC_USER_API_KEY
 
 # Optional
-vercel env add OPENROUTER_MODEL          # e.g. openai/gpt-4o
-vercel env add METRC_API_URL             # default: https://sandbox-api-co.metrc.com
+vercel env add OPENROUTER_MODEL
+vercel env add METRC_API_URL
 ```
 
 Redeploy so new env vars are used:
@@ -103,6 +104,8 @@ Redeploy so new env vars are used:
 ```bash
 vercel --prod
 ```
+
+To list vars: `vercel env ls`. To pull into a local file: `vercel env pull .env.local`.
 
 **Option B – Dashboard**
 

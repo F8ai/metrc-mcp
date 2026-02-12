@@ -199,7 +199,15 @@ permalink: /chat/
         const data = await res.json();
         const content = data.result && data.result.content && data.result.content[0] && data.result.content[0].text;
         if (!content) throw new Error(data.error && data.error.message || 'No facilities in response');
-        const list = JSON.parse(content);
+        if (data.result.isError || (typeof content === 'string' && content.trim().startsWith('Error:'))) {
+          throw new Error(content);
+        }
+        var list;
+        try {
+          list = JSON.parse(content);
+        } catch (_) {
+          throw new Error(content || 'Invalid response from API');
+        }
         const facilities = Array.isArray(list) ? list : (list.Data || list.data || []);
         facilitySelect.innerHTML = '<option value="">— Select facility —</option>';
         facilities.forEach(function(f) {
