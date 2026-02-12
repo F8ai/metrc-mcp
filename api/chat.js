@@ -1,6 +1,6 @@
 /**
- * Vercel Edge: Chat endpoint using OpenRouter (GPT-OSS-120B) with METRC MCP tools.
- * POST body: { message: string } or { messages: Array<{role, content}> }
+ * Vercel Edge: Chat endpoint using OpenRouter with METRC MCP tools.
+ * POST body: { message: string, messages?: [], license_number?: string }
  * Uses OPENROUTER_API_KEY, OPENROUTER_MODEL (default: openai/gpt-4o), METRC_* for tools.
  */
 
@@ -12,43 +12,53 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-4o';
 const MAX_TOOL_ROUNDS = 8;
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': 'https://f8ai.github.io',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 function getApiKey() {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error('OPENROUTER_API_KEY is required');
   return key;
 }
 
+function jsonResponse(body, status = 200, headers = {}) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS, ...headers },
+  });
+}
+
 export default async function handler(req) {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
   let body;
   try {
     body = await req.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const { message, messages: existingMessages } = body;
+  const { message, messages: existingMessages, license_number: defaultLicense } = body;
   let messages = Array.isArray(existingMessages) ? [...existingMessages] : [];
   if (typeof message === 'string' && message.trim()) {
     messages.push({ role: 'user', content: message.trim() });
   }
   if (messages.length === 0) {
-    return new Response(
-      JSON.stringify({ error: 'Provide "message" or "messages" in the request body' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
-    );
+    return jsonResponse({ error: 'Provide "message" or "messages" in the request body' }, 400);
   }
 
-  const systemPrompt = `You are a helpful assistant with access to METRC (cannabis tracking) tools for the Colorado sandbox. When the user asks about facilities, packages, harvests, plants, items, locations, or other METRC data, use the provided tools. Call tools with the correct arguments (e.g. license_number from metrc_get_facilities when needed). Summarize results clearly.`;
+  let systemPrompt = `You are a helpful assistant with access to METRC (cannabis tracking) tools for the Colorado sandbox. When the user asks about facilities, packages, harvests, plants, items, locations, or other METRC data, use the provided tools. Call tools with the correct arguments (e.g. license_number from metrc_get_facilities when needed). Summarize results clearly.`;
+  if (defaultLicense && String(defaultLicense).trim()) {
+    systemPrompt += ` The user has selected facility license_number: ${String(defaultLicense).trim()}. Use this license_number for all METRC tool calls unless the user explicitly asks about a different facility.`;
+  }
 
   const tools = getOpenAITools();
   const apiKey = getApiKey();
@@ -78,19 +88,13 @@ export default async function handler(req) {
 
     if (!res.ok) {
       const text = await res.text();
-      return new Response(
-        JSON.stringify({ error: 'OpenRouter request failed', status: res.status, detail: text }),
-        { status: 502, headers: { 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'OpenRouter request failed', status: res.status, detail: text }, 502);
     }
 
     const data = await res.json();
     const choice = data.choices?.[0];
     if (!choice) {
-      return new Response(
-        JSON.stringify({ error: 'No choices in OpenRouter response', raw: data }),
-        { status: 502, headers: { 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'No choices in OpenRouter response', raw: data }, 502);
     }
 
     lastResponse = choice;
@@ -99,14 +103,11 @@ export default async function handler(req) {
 
     if (!toolCalls || toolCalls.length === 0) {
       const content = delta.content ?? choice.text ?? '';
-      return new Response(
-        JSON.stringify({
-          message: typeof content === 'string' ? content : (content[0]?.text ?? ''),
-          role: 'assistant',
-          finish_reason: choice.finish_reason,
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({
+        message: typeof content === 'string' ? content : (content[0]?.text ?? ''),
+        role: 'assistant',
+        finish_reason: choice.finish_reason,
+      });
     }
 
     requestMessages.push({
@@ -142,12 +143,9 @@ export default async function handler(req) {
   }
 
   const content = lastResponse?.message?.content ?? lastResponse?.text ?? 'Tool loop limit reached.';
-  return new Response(
-    JSON.stringify({
-      message: typeof content === 'string' ? content : (content[0]?.text ?? ''),
-      role: 'assistant',
-      finish_reason: 'max_tool_rounds',
-    }),
-    { headers: { 'Content-Type': 'application/json' } }
-  );
+  return jsonResponse({
+    message: typeof content === 'string' ? content : (content[0]?.text ?? ''),
+    role: 'assistant',
+    finish_reason: 'max_tool_rounds',
+  });
 }

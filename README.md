@@ -106,12 +106,16 @@ The client can pass that text to the LLM as context, then the LLM calls the METR
 
 ## Chat and MCP on Vercel Edge
 
+**Setup:** See **[Setup with GitHub and Vercel](https://f8ai.github.io/metrc-mcp/setup-gh-vercel)** for step-by-step use of `gh` and `vercel` (Pages + API + env vars).
+
 The repo includes **Vercel Edge** endpoints so you can host a chat UI and the METRC MCP over HTTP:
 
 | Endpoint | Description |
 |----------|-------------|
 | **`POST /api/chat`** | Chat with OpenRouter (default model: `openai/gpt-4o`). The model has access to all METRC tools; when it calls a tool, the Edge runs it and returns the result. Body: `{ "message": "List my facilities" }` or `{ "messages": [...] }`. |
 | **`POST /api/mcp`** | MCP-over-HTTP: JSON-RPC `tools/list` and `tools/call` so any client can list and invoke METRC tools. |
+
+**Chat UI:** After deploy, open **`https://your-project.vercel.app/chat.html`** (or **`/chat`**). The page is in `public/` and is served by Vercel; API URL defaults to the same origin. Use the facility dropdown and send messages.
 
 **Deploy:** Connect the repo to Vercel; the `api/` and `lib/` files deploy as Edge (see `export const config = { runtime: 'edge' }` in `api/chat.js` and `api/mcp.js`).
 

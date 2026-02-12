@@ -14,11 +14,13 @@ MCP (Model Context Protocol) server that exposes **METRC** cannabis tracking API
 | Page | Description |
 |------|-------------|
 | [**Getting started**](getting-started) | Setup, credentials, Cursor MCP config |
+| [**Setup (GitHub + Vercel)**](setup-gh-vercel) | Deploy with `gh` and `vercel` CLIs — Pages + API |
 | [**Tools**](tools) | All MCP tools (50+) by category |
 | [**Skills**](skills) | Analysis skills (needs-attention, facility summary, audit snapshot, FIFO, etc.) and MCP resource URIs |
 | [**Master Framework**](framework) | Product/feature framework mapped to MCP capabilities (bulk, aging, compliance, yield, reports, etc.) |
 | [**Framework Q&A**](framework-qa) | Example questions and expected answers for each framework item (demos, testing) |
 | [**Sandbox view**](sandbox-view) | Colorado sandbox: everything referenced and cross-linked (entities, lifecycle, tools, skills) |
+| [**Chat**](chat/) | Chat UI with facility dropdown (GitHub Pages; point API URL at your Vercel deployment) |
 
 ---
 
