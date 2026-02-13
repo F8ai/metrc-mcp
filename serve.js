@@ -10,6 +10,8 @@ import handler from './api/mcp.js';
 const PORT = parseInt(process.env.PORT || '8080', 10);
 
 const server = createServer(async (req, res) => {
+  const startMs = Date.now();
+
   // Health check
   if (req.method === 'GET' && (req.url === '/' || req.url === '/health')) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -38,6 +40,8 @@ const server = createServer(async (req, res) => {
   res.writeHead(webResponse.status, Object.fromEntries(webResponse.headers.entries()));
   const responseBody = await webResponse.text();
   res.end(responseBody);
+
+  console.log(`${req.method} ${req.url} → ${webResponse.status} (${Date.now() - startMs}ms)`);
 });
 
 server.listen(PORT, () => {

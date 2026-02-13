@@ -36,25 +36,33 @@ export default async function handler(req) {
   }
 
   const { jsonrpc, id, method, params } = body;
+  const startMs = Date.now();
+
   if (method === 'tools/list') {
     const tools = getToolsList();
+    console.log(`[MCP] tools/list → ${tools.length} tools (${Date.now() - startMs}ms)`);
     return jsonResponse({ jsonrpc: jsonrpc || '2.0', id: id ?? 1, result: { tools } });
   }
 
   if (method === 'tools/call') {
     const name = params?.name;
     const args = params?.arguments ?? {};
+    const license = args.license_number ? ` license=${args.license_number}` : '';
     if (!name) {
+      console.log(`[MCP] tools/call → ERROR missing tool name`);
       return jsonResponse({ jsonrpc: jsonrpc || '2.0', id: id ?? 1, error: { code: -32602, message: 'Missing tool name' } }, 400);
     }
     try {
       const text = await executeTool(name, args);
+      const resultLen = typeof text === 'string' ? text.length : 0;
+      console.log(`[MCP] tools/call ${name}${license} → OK ${resultLen} chars (${Date.now() - startMs}ms)`);
       return jsonResponse({
         jsonrpc: jsonrpc || '2.0',
         id: id ?? 1,
         result: { content: [{ type: 'text', text }] },
       });
     } catch (err) {
+      console.error(`[MCP] tools/call ${name}${license} → ERROR: ${err.message} (${Date.now() - startMs}ms)`);
       return jsonResponse({
         jsonrpc: jsonrpc || '2.0',
         id: id ?? 1,
@@ -66,5 +74,6 @@ export default async function handler(req) {
     }
   }
 
+  console.log(`[MCP] unknown method: ${method}`);
   return jsonResponse({ jsonrpc: jsonrpc || '2.0', id: id ?? 1, error: { code: -32601, message: `Method not found: ${method}` } }, 404);
 }
