@@ -377,7 +377,7 @@ const tools = [
         is_production_batch: { type: 'boolean' },
         product_requires_remediation: { type: 'boolean' },
         actual_date: { type: 'string', description: 'YYYY-MM-DD' },
-        ingredients: { type: 'array', description: 'For derived packages' },
+        ingredients: { type: 'array', items: { type: 'object' }, description: 'For derived packages' },
       },
       required: ['license_number', 'tag', 'location_id', 'item_id', 'quantity', 'unit_of_measure', 'actual_date'],
     },
