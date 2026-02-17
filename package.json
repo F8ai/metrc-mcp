@@ -11,7 +11,7 @@
     "populate-simulated-year": "node scripts/populate-simulated-year.mjs"
   },
   "dependencies": {
-    "@f8ai/metrc-client": "file:../metrc-client",
+    "@f8ai/metrc-client": "^0.1.0",
     "@modelcontextprotocol/sdk": "^1.11.0",
     "dotenv": "^16.3.1"
   },
