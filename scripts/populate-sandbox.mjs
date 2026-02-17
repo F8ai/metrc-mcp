@@ -49,10 +49,15 @@ async function main() {
     'SBX Strain 11',
     'SBX Strain 12',
   ];
-  for (const name of targetStrainNames) {
+  for (let idx = 0; idx < targetStrainNames.length; idx++) {
+    const name = targetStrainNames[idx];
     if (strainNames.has(name)) continue;
+    const indica = 30 + (idx * 3) % 41; // vary between 30-70
     try {
-      await metrcFetch('/strains/v2/', { licenseNumber: license }, { method: 'POST', body: [{ Name: name }] });
+      await metrcFetch('/strains/v2/', { licenseNumber: license }, {
+        method: 'POST',
+        body: [{ Name: name, IndicaPercentage: indica, SativaPercentage: 100 - indica }],
+      });
       strainNames.add(name);
       log('Created strain:', name);
     } catch (e) {
@@ -64,98 +69,120 @@ async function main() {
 
   // 3) Location types and plant-capable location
   const types = (await metrcFetch('/locations/v2/types', { licenseNumber: license })).Data || [];
-  const plantType = types.find((t) => t.ForPlants === true);
+  log('Location types:', types.map((t) => `${t.Name} (ForPlants:${t.ForPlants})`).join(', '));
+  const plantType = types.find((t) => t.ForPlants === true) || types.find((t) => t.ForPlantBatches === true) || types[0];
+  let plantLocationName = null;
   let plantLocationId = null;
   if (plantType) {
+    const locName = `Grow Room 1-${today}`;
     try {
       const created = await metrcFetch(
         '/locations/v2/',
         { licenseNumber: license },
-        { method: 'POST', body: [{ Name: 'Grow Room 1', LocationTypeId: plantType.Id }] }
+        { method: 'POST', body: [{ Name: locName, LocationTypeName: plantType.Name }] }
       );
-      plantLocationId = Array.isArray(created) ? created[0]?.Id : created?.Id ?? plantType.Id;
-      log('Created plant location:', plantLocationId);
+      plantLocationId = created?.Ids?.[0] ?? null;
+      plantLocationName = locName;
+      log('Created plant location:', locName, '(Id:', plantLocationId, ')');
     } catch (e) {
       log('Create plant location:', e.message);
     }
   } else {
-    log('No location type with ForPlants: true; skipping plantings.');
+    log('No location types available; skipping location creation.');
   }
 
-  // 4) Locations for harvest/drying and packages
+  // 4) Locations for harvest/drying and packages (use names for v2 API)
   const locations = (await metrcFetch('/locations/v2/active', { licenseNumber: license })).Data || [];
-  const harvestLocationId = locations[0]?.Id ?? null;
-  log('Harvest/drying location Id:', harvestLocationId);
+  const harvestLocation = locations.find((l) => l.ForHarvests) || locations[0] || null;
+  const harvestLocationName = harvestLocation?.Name ?? null;
+  const harvestLocationId = harvestLocation?.Id ?? null;
+  // If we didn't create a plant location, try to find an existing plant-capable one
+  if (!plantLocationName) {
+    const existingPlantLoc = locations.find((l) => l.ForPlants);
+    if (existingPlantLoc) {
+      plantLocationName = existingPlantLoc.Name;
+      plantLocationId = existingPlantLoc.Id;
+      log('Using existing plant location:', plantLocationName);
+    }
+  }
+  log('Harvest/drying location:', harvestLocationName);
 
   // 5) Plant tags and plantings (if we have a plant location)
   let plantLabels = [];
-  if (plantLocationId && strains.length >= 1) {
+  if (plantLocationName && strains.length >= 1) {
     const tagsResp = await metrcFetch('/tags/v2/plant/available', { licenseNumber: license });
     plantLabels = (tagsResp?.Data ?? tagsResp ?? [])?.map((t) => (typeof t === 'string' ? t : t.Label ?? t))?.filter(Boolean) ?? [];
     if (Array.isArray(plantLabels)) plantLabels = plantLabels.slice(0, 24);
     else plantLabels = [];
     log('Plant tags available:', plantLabels.length);
 
-    const batchTypes = (await metrcFetch('/plantbatches/v2/types', { licenseNumber: license })).Data || [];
-    const seedType = (batchTypes.find((t) => t.Name === 'Seed') || batchTypes[0])?.Name || 'Seed';
+    if (plantLabels.length === 0) {
+      log('No plant tags available; skipping plantings.');
+    } else {
+      const batchTypes = (await metrcFetch('/plantbatches/v2/types', { licenseNumber: license })).Data || [];
+      const seedType = (batchTypes.find((t) => t.Name === 'Seed') || batchTypes[0])?.Name || 'Seed';
 
-    let tagIndex = 0;
-    for (let i = 0; i < Math.min(12, strains.length) && tagIndex + 2 <= plantLabels.length; i++) {
-      const strain = strains[i];
-      const batchName = `Lifecycle-${strain.Name.replace(/\s/g, '-')}-${today}`;
-      const labels = plantLabels.slice(tagIndex, tagIndex + 2);
-      tagIndex += 2;
-      try {
-        const body = labels.map((label) => ({
-          PlantBatchName: batchName,
-          Type: seedType,
-          Count: 1,
-          LocationId: plantLocationId,
-          ActualDate: today,
-          PlantLabel: label,
-          Strain: strain.Name,
-        }));
-        await metrcFetch('/plantbatches/v2/plantings', { licenseNumber: license }, { method: 'POST', body });
-        log('Plantings created:', batchName);
-      } catch (e) {
-        log('Plantings failed for', strain.Name, e.message);
+      let tagIndex = 0;
+      for (let i = 0; i < Math.min(12, strains.length) && tagIndex + 2 <= plantLabels.length; i++) {
+        const strain = strains[i];
+        const batchName = `Lifecycle-${strain.Name.replace(/\s/g, '-')}-${today}`;
+        const labels = plantLabels.slice(tagIndex, tagIndex + 2);
+        tagIndex += 2;
+        try {
+          const body = labels.map((label) => ({
+            Name: batchName,
+            Type: seedType,
+            Count: 1,
+            LocationId: plantLocationId,
+            ActualDate: today,
+            PlantLabel: label,
+            Strain: strain.Name,
+          }));
+          await metrcFetch('/plantbatches/v2/plantings', { licenseNumber: license }, { method: 'POST', body });
+          log('Plantings created:', batchName);
+        } catch (e) {
+          log(`Plantings failed for ${strain.Name}:`, e.message);
+        }
       }
     }
+  } else {
+    log('No plant location or strains; skipping plantings.');
   }
 
-  // 6) Vegetative → Flowering
-  if (plantLocationId) {
-    try {
-      const vegetative = (await metrcFetch('/plants/v2/vegetative', { licenseNumber: license })).Data || [];
-      const ids = vegetative.map((p) => p.Id).filter(Boolean);
-      if (ids.length > 0) {
-        const changeBody = ids.map((Id) => ({ Id, GrowthPhase: 'Flowering', ActualDate: today }));
-        await metrcFetch('/plants/v2/growthphase', { licenseNumber: license }, { method: 'PUT', body: changeBody });
-        log('Moved to flowering:', ids.length, 'plants');
-      }
-    } catch (e) {
-      log('Growth phase change:', e.message);
+  // 6) Vegetative → Flowering (always try, not just when we created a plant location)
+  try {
+    const vegetative = (await metrcFetch('/plants/v2/vegetative', { licenseNumber: license })).Data || [];
+    const ids = vegetative.map((p) => p.Id).filter(Boolean);
+    if (ids.length > 0) {
+      const changeBody = ids.map((Id) => ({ Id, GrowthPhase: 'Flowering', ActualDate: today }));
+      await metrcFetch('/plants/v2/growthphase', { licenseNumber: license }, { method: 'PUT', body: changeBody });
+      log('Moved to flowering:', ids.length, 'plants');
+    } else {
+      log('No vegetative plants to move to flowering.');
     }
+  } catch (e) {
+    log('Growth phase change:', e.message);
   }
 
-  // 7) Harvest flowering plants
+  // 7) Harvest flowering plants (v2 uses Plant, DryingLocation, UnitOfWeight)
   let harvests = [];
   try {
     const flowering = (await metrcFetch('/plants/v2/flowering', { licenseNumber: license })).Data || [];
-    if (flowering.length > 0 && harvestLocationId != null) {
+    if (flowering.length > 0 && harvestLocationName != null) {
       const harvestName = `Harvest-${today}-1`;
-      const body = flowering.map((p, i) => ({
+      log('Harvesting', flowering.length, 'flowering plants...');
+      const body = flowering.map((p) => ({
         HarvestName: harvestName,
-        HarvestDate: today,
-        Id: p.Id,
-        Label: p.Label ?? undefined,
+        Plant: p.Label,
         Weight: 1,
-        UnitOfMeasure: 'Ounces',
+        UnitOfWeight: 'Ounces',
+        DryingLocation: harvestLocationName,
         ActualDate: today,
-        DryingLocationId: harvestLocationId,
       }));
       await metrcFetch('/plants/v2/harvest', { licenseNumber: license }, { method: 'PUT', body });
       log('Harvest created:', harvestName);
+    } else {
+      log('No flowering plants to harvest or no drying location.');
     }
   } catch (e) {
     log('Harvest create:', e.message);
@@ -163,10 +190,31 @@ async function main() {
 
   harvests = (await metrcFetch('/harvests/v2/active', { licenseNumber: license })).Data || [];
 
-  // 8) Items: ensure we have at least one for packaging
+  // 8) Items: ensure we have a WeightBased item for packaging (Buds category)
   let items = (await metrcFetch('/items/v2/active', { licenseNumber: license })).Data || [];
-  if (items.length === 0 && strains.length > 0) {
-    const strainId = strains[0].Id;
+  // Prefer a WeightBased item (Buds) for harvest packages; CountBased items (Immature Plants) won't work
+  let budsItem = items.find((i) => i.QuantityType === 'WeightBased') || null;
+  if (!budsItem && strains.length > 0) {
+    // Discover item categories dynamically (v1 returns flat list, v2 may be paginated)
+    let categoryName = 'Buds';
+    try {
+      const cats = await metrcFetch('/items/v1/categories', {});
+      const catList = Array.isArray(cats) ? cats : (cats.Data || []);
+      const buds = catList.find((c) => c.Name === 'Buds');
+      if (buds) categoryName = buds.Name;
+      else {
+        const weightBased = catList.find((c) => c.QuantityType === 'WeightBased');
+        if (weightBased) categoryName = weightBased.Name;
+        else if (catList.length > 0) categoryName = catList[0].Name;
+      }
+      log('Using item category:', categoryName);
+    } catch (e) {
+      log('Category lookup failed, using default:', categoryName);
+    }
+    // v2 API uses Strain (name string) instead of StrainId
+    // Find a SBX strain first for the item, fallback to any strain
+    const sbxStrain = strains.find((s) => s.Name.startsWith('SBX'));
+    const strainName = sbxStrain?.Name || strains[0].Name;
     try {
       await metrcFetch(
         '/items/v2/',
@@ -175,20 +223,23 @@ async function main() {
           method: 'POST',
           body: [
             {
-              Name: 'Flower - Usable',
-              ItemCategory: 'Usable Marijuana',
+              Name: `Flower - Buds - ${today}`,
+              ItemCategory: categoryName,
               UnitOfMeasure: 'Ounces',
-              StrainId: strainId,
+              Strain: strainName,
+              UnitThcPercent: 20.0,
             },
           ],
         }
       );
-      log('Created item: Flower - Usable');
+      log('Created item: Flower - Buds');
     } catch (e) {
       log('Create item:', e.message);
     }
     items = (await metrcFetch('/items/v2/active', { licenseNumber: license })).Data || [];
+    budsItem = items.find((i) => i.QuantityType === 'WeightBased') || items[0] || null;
   }
+  log('Items count:', items.length, '| Using item:', budsItem?.Name ?? 'none');
 
   // 9) Package tags
   const pkgTagsResp = await metrcFetch('/tags/v2/package/available', { licenseNumber: license });
@@ -197,8 +248,10 @@ async function main() {
   log('Package tags available:', pkgTags.length);
 
   // 10) Create packages from harvests (or create standalone packages if no harvests)
-  const itemId = items[0]?.Id;
-  if (harvests.length > 0 && itemId != null && harvestLocationId != null && pkgTags.length > 0) {
+  // v2 API uses name-based fields: Item, Location, UnitOfWeight/UnitOfMeasure
+  const itemName = budsItem?.Name ?? null;
+  const itemUom = budsItem?.UnitOfMeasureName ?? 'Ounces';
+  if (harvests.length > 0 && itemName != null && harvestLocationName != null && pkgTags.length > 0) {
     for (const harvest of harvests.slice(0, 5)) {
       const used = pkgTags.splice(0, 2);
       if (used.length === 0) break;
@@ -207,10 +260,16 @@ async function main() {
           HarvestId: harvest.Id,
           HarvestName: harvest.Name,
           Tag,
-          LocationId: harvestLocationId,
-          ItemId: itemId,
-          Quantity: 1,
-          UnitOfMeasure: 'Ounces',
+          Location: harvestLocationName,
+          Item: itemName,
+          Weight: 1,
+          UnitOfWeight: itemUom,
+          Ingredients: [{
+            HarvestId: harvest.Id,
+            HarvestName: harvest.Name,
+            Weight: 1,
+            UnitOfWeight: itemUom,
+          }],
           IsProductionBatch: false,
           ProductRequiresRemediation: false,
           ActualDate: today,
@@ -222,7 +281,7 @@ async function main() {
         pkgTags.unshift(...used);
       }
     }
-  } else if (itemId != null && harvestLocationId != null && pkgTags.length >= 12) {
+  } else if (itemName != null && harvestLocationName != null && pkgTags.length >= 12) {
     // No harvests: create 12 standalone packages (one per strain) so we have "sale" inventory
     for (let i = 0; i < Math.min(12, strains.length, pkgTags.length); i++) {
       const tag = pkgTags[i];
@@ -235,10 +294,10 @@ async function main() {
             body: [
               {
                 Tag: tag,
-                LocationId: harvestLocationId,
-                ItemId: itemId,
+                Location: harvestLocationName,
+                Item: itemName,
                 Quantity: 1,
-                UnitOfMeasure: 'Ounces',
+                UnitOfMeasure: itemUom,
                 IsProductionBatch: false,
                 ProductRequiresRemediation: false,
                 ActualDate: today,
@@ -251,6 +310,8 @@ async function main() {
         log('Create package failed:', e.message);
       }
     }
+  } else {
+    log('Skipping package creation (items:', itemName, '| location:', harvestLocationName, '| tags:', pkgTags.length, ')');
   }
 
   // 11) Finish packages (get active, finish first N)
