@@ -7,22 +7,36 @@ export const config = { runtime: 'edge' };
 
 import { getToolsList, executeTool } from '../lib/metrc-edge.js';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://f8ai.github.io',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+const DEFAULT_ORIGIN = 'https://f8ai.github.io';
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || DEFAULT_ORIGIN)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function getCorsHeaders(req) {
+  const origin = req?.headers?.get?.('origin') || '';
+  const matched = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': matched,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
+
+// Store req in module scope — safe in Edge runtime (one request per isolate)
+let _currentReq = null;
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    headers: { 'Content-Type': 'application/json', ...getCorsHeaders(_currentReq) },
   });
 }
 
 export default async function handler(req) {
+  _currentReq = req;
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   }
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405);

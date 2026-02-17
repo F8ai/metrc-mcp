@@ -13,11 +13,21 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-4o';
 const MAX_TOOL_ROUNDS = 8;
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://f8ai.github.io',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+const DEFAULT_ORIGIN = 'https://f8ai.github.io';
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || DEFAULT_ORIGIN)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function getCorsHeaders(req) {
+  const origin = req?.headers?.get?.('origin') || '';
+  const matched = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': matched,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
 
 async function getApiKey() {
   const keyUrl = process.env.OPENROUTER_KEY_URL;
@@ -37,16 +47,20 @@ async function getApiKey() {
   return key;
 }
 
+// Store req in module scope for jsonResponse calls that don't pass it
+let _currentReq = null;
+
 function jsonResponse(body, status = 200, headers = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS, ...headers },
+    headers: { 'Content-Type': 'application/json', ...getCorsHeaders(_currentReq), ...headers },
   });
 }
 
 export default async function handler(req) {
+  _currentReq = req;
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   }
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405);
