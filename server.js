@@ -22,6 +22,7 @@ import { join } from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+import { encodeBasicAuth } from '@formul8/metrc-client';
 import { getToolsList } from './lib/tools.js';
 import { executeTool } from './lib/tool-executor.js';
 
@@ -53,10 +54,9 @@ async function metrcFetch(path, params = {}, options = {}) {
   }
   const url = new URL(path, BASE);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
-  const creds = Buffer.from(`${VENDOR}:${USER}`).toString('base64');
   const init = {
     method: options.method || 'GET',
-    headers: { Authorization: `Basic ${creds}` },
+    headers: { Authorization: encodeBasicAuth(VENDOR, USER) },
   };
   if (options.body !== undefined) {
     init.headers['Content-Type'] = 'application/json';
