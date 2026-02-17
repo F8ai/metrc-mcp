@@ -22,7 +22,7 @@ import { join } from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { encodeBasicAuth } from '@formul8/metrc-client';
+import { encodeBasicAuth } from '@f8ai/metrc-client';
 import { getToolsList } from './lib/tools.js';
 import { executeTool } from './lib/tool-executor.js';
 
