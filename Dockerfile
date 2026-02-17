@@ -2,8 +2,9 @@ FROM node:20-slim
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci --production
+ARG NPM_TOKEN
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci --omit=dev
 
 COPY server.js ./
 COPY api/ ./api/
