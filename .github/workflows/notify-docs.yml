@@ -18,8 +18,16 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-    # Skip if commit message contains [skip-docs] or is a merge commit with no file changes
-    if: "!contains(github.event.head_commit.message, '[skip-docs]')"
+    # Skip trivial commits that never need doc updates.
+    # [skip-docs] is the explicit opt-out. The other prefixes catch routine
+    # housekeeping commits (typos, formatting, deps, CI tweaks, tests).
+    if: >-
+      !contains(github.event.head_commit.message, '[skip-docs]') &&
+      !startsWith(github.event.head_commit.message, 'chore(deps)') &&
+      !startsWith(github.event.head_commit.message, 'chore(lint)') &&
+      !startsWith(github.event.head_commit.message, 'style:') &&
+      !startsWith(github.event.head_commit.message, 'test:') &&
+      !startsWith(github.event.head_commit.message, 'ci:')
     steps:
       - name: Get changed files
         id: changes
