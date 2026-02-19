@@ -34,7 +34,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Get the list of files changed in the push
             const compare = await github.rest.repos.compareCommitsWithBasehead({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -44,6 +43,17 @@ jobs:
             core.setOutput('files', JSON.stringify(files));
             console.log(`Changed files: ${files.join(', ')}`);
 
+            // Build payload with proper JSON escaping to handle multi-line
+            // commit messages (e.g., Co-authored-by trailers).
+            const payload = JSON.stringify({
+              source_repo: context.payload.repository.name,
+              changed_files: files,
+              commit_url: context.payload.head_commit?.url || '',
+              commit_message: context.payload.head_commit?.message || '',
+              author: context.payload.head_commit?.author?.username || 'unknown'
+            });
+            core.setOutput('payload', payload);
+
       - name: Dispatch to docs-site
         if: steps.changes.outputs.files != '[]'
         uses: peter-evans/repository-dispatch@v3
@@ -51,11 +61,4 @@ jobs:
           token: ${{ secrets.DOCS_REPO_PAT }}
           repository: F8ai/formul8-platform
           event-type: doc-impact
-          client-payload: >-
-            {
-              "source_repo": "${{ github.event.repository.name }}",
-              "changed_files": ${{ steps.changes.outputs.files }},
-              "commit_url": "${{ github.event.head_commit.url }}",
-              "commit_message": "${{ github.event.head_commit.message }}",
-              "author": "${{ github.event.head_commit.author.username }}"
-            }
+          client-payload: ${{ steps.changes.outputs.payload }}
