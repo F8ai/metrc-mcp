@@ -1,0 +1,53 @@
+# =============================================================================
+# TEMPLATE: Copy this file to each sub-repo as .github/workflows/notify-docs.yml
+#
+# Required secret: DOCS_REPO_PAT (GitHub PAT with repo scope for F8ai/formul8-platform)
+#   - Create a fine-grained PAT scoped to formul8-platform with Contents: Read
+#     and Actions: Write permissions, or a classic PAT with repo scope.
+#   - Add it as a repository secret named DOCS_REPO_PAT in each sub-repo.
+#
+# No per-repo customization needed. The dispatch table in docs-site controls
+# which files map to which docs. This workflow just reports what changed.
+# =============================================================================
+name: Notify Docs of Changes
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    # Skip if commit message contains [skip-docs] or is a merge commit with no file changes
+    if: "!contains(github.event.head_commit.message, '[skip-docs]')"
+    steps:
+      - name: Get changed files
+        id: changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get the list of files changed in the push
+            const compare = await github.rest.repos.compareCommitsWithBasehead({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              basehead: `${context.payload.before}...${context.payload.after}`
+            });
+            const files = compare.data.files.map(f => f.filename);
+            core.setOutput('files', JSON.stringify(files));
+            console.log(`Changed files: ${files.join(', ')}`);
+
+      - name: Dispatch to docs-site
+        if: steps.changes.outputs.files != '[]'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DOCS_REPO_PAT }}
+          repository: F8ai/formul8-platform
+          event-type: doc-impact
+          client-payload: >-
+            {
+              "source_repo": "${{ github.event.repository.name }}",
+              "changed_files": ${{ steps.changes.outputs.files }},
+              "commit_url": "${{ github.event.head_commit.url }}",
+              "commit_message": "${{ github.event.head_commit.message }}",
+              "author": "${{ github.event.head_commit.author.username }}"
+            }
