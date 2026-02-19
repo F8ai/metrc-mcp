@@ -133,6 +133,7 @@ async function main() {
             Name: batchName,
             Type: seedType,
             Count: 1,
+            Location: plantLocationName,
             LocationId: plantLocationId,
             ActualDate: today,
             PlantLabel: label,
