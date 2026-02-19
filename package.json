@@ -8,6 +8,7 @@
     "start": "node server.js",
     "test": "node test/test-server.mjs",
     "populate-sandbox": "node scripts/populate-sandbox.mjs",
+    "populate-lab-sandbox": "node scripts/populate-lab-sandbox.mjs",
     "populate-simulated-year": "node scripts/populate-simulated-year.mjs"
   },
   "dependencies": {
