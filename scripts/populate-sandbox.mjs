@@ -4,9 +4,9 @@
  * Run from repo root: node scripts/populate-sandbox.mjs
  * Requires .env with METRC_VENDOR_API_KEY and METRC_USER_API_KEY.
  *
- * Sandbox limits: Colorado may only offer location types that don't allow plants (ForPlants: false).
- * If so, plantings are skipped and the script creates strains + items only; you can still create
- * packages via metrc_create_package (not from harvest) if the sandbox allows.
+ * Defaults to CO-21 (Retail Cultivation) which has full ForPlants location types and item
+ * categories. Override with METRC_LICENSE env var. Avoid CO-1 (Accelerator Cultivation)
+ * which has crippled categories and no ForPlants location type.
  */
 
 import { metrcFetch, LICENSE, hasCredentials } from './lib/metrc-fetch.mjs';

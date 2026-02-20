@@ -89,7 +89,8 @@ export async function metrcFetch(path, params = {}, options = {}) {
   }
 }
 
-export const LICENSE = process.env.METRC_LICENSE || 'SF-SBX-CO-1-8002';
+// Default to Retail Cultivation (CO-21) — Accelerator (CO-1) has crippled categories and no ForPlants location types.
+export const LICENSE = process.env.METRC_LICENSE || 'SF-SBX-CO-21-8002';
 
 // ---------------------------------------------------------------------------
 // Configurable fetch — used by multi-state seeders

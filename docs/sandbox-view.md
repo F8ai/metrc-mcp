@@ -7,7 +7,7 @@ layout: default
 
 A single reference for everything in the **Colorado METRC sandbox**: what exists, how it’s linked, and which [tools](tools), [skills](skills), and [framework](framework) items to use. Use this page to navigate the sandbox and the docs.
 
-**Environment:** [Colorado sandbox](https://sandbox-api-co.metrc.com) · **Default license:** `SF-SBX-CO-1-8002` (Accelerator Cultivation). Get licenses via [**metrc_get_facilities**](tools#facility--reference-no-or-single-license).
+**Environment:** [Colorado sandbox](https://sandbox-api-co.metrc.com) · **Recommended license:** `SF-SBX-CO-21-8002` (Retail Cultivation). Get all licenses via [**metrc_get_facilities**](tools#facility--reference-no-or-single-license). See [Sandbox Limitations](sandbox-limitations) for facility selection guidance.
 
 ---
 
@@ -24,9 +24,10 @@ The sandbox has **28 facilities** (SF-SBX-CO-1-8002 through SF-SBX-CO-28-8002). 
 
 | Type (example) | License | Typical data |
 |----------------|--------|--------------|
-| **Accelerator Cultivation** | SF-SBX-CO-1-8002 | Strains, locations (e.g. harvest-capable), plants, harvests. Use for seed-to-sale and [populate script](#11-populate-scripts). |
-| **Accelerator Manufacturer** | SF-SBX-CO-2-8002 | Strains, **items** (e.g. Metered Dose Inhaler, Vaporizer/Cartridge). No harvests (harvests API returns 401 for non-cultivation). |
-| **Accelerator Store** | SF-SBX-CO-3-8002 | Strains, **items** (e.g. Vaporizer/Cartridge). No harvests. |
+| **Retail Cultivation** | SF-SBX-CO-21-8002 | Full lifecycle: strains, ForPlants locations, plants, harvests, packages. **Recommended for seed-to-sale.** |
+| **Retail Store** | SF-SBX-CO-24-8002 | Items, categories, customer types, transfer types. |
+| **Retail Testing Lab** | SF-SBX-CO-25-8002 | Lab test types and recording. |
+| **Accelerator Cultivation** | SF-SBX-CO-1-8002 | Limited: 0 item categories, no ForPlants location type. **Not recommended.** |
 | **Others** | SF-SBX-CO-4 through 28 | Varies; many have items, 0 packages/harvests until data is created or transferred. |
 
 Use the [Sandbox view](/sandbox) UI: **Load facilities**, pick a facility, then **Refresh data** to see locations, strains, items, harvests, and packages for that license. For Chat and Adam Freed Q&A, select the facility whose data you want to query.
@@ -152,14 +153,14 @@ Seeds the Colorado sandbox with **12 strains** and a full lifecycle (plantings �
 - **Run:** `npm run populate-sandbox` (see [README](https://github.com/F8ai/metrc-mcp#populate-sandbox-full-lifecycle)).
 - **Requires:** `.env` with `METRC_VENDOR_API_KEY` and `METRC_USER_API_KEY`.
 - **Creates:** Strains (SBX Strain 1–12), optional plant location, plantings (if ForPlants location exists), harvest(s), item(s), packages, and finishes packages.
-- **Limits:** If the sandbox has no location type with **ForPlants: true**, plantings are skipped; you still get strains and items (and standalone packages if the API allows).
+- **Default facility:** CO-21 (Retail Cultivation) — has full ForPlants location types and item categories. Override with `METRC_LICENSE` env var. Avoid CO-1 (Accelerator) which has crippled categories.
 
 ### populate-simulated-year (full lifecycle in simulated time)
 
 Runs the **entire seed-to-sale lifecycle** with backdated dates over ~52 weeks so the sandbox has a year of data:
 
 - **Run:** `npm run populate-simulated-year`
-- **Requires:** Same `.env`; optional `METRC_LICENSE` (default `SF-SBX-CO-1-8002`). Enough **plant tags** and **package tags** in the sandbox (run sandbox setup or populate-sandbox first if needed).
+- **Requires:** Same `.env`; optional `METRC_LICENSE` (default `SF-SBX-CO-21-8002`). Enough **plant tags** and **package tags** in the sandbox (run sandbox setup or populate-sandbox first if needed).
 - **Steps (in order):**  
   1. Sandbox setup → strains → locations (plant + harvest/drying)  
   2. **Grow:** 12 cycles, each: Seed → plants (plantings) → vegetative → flowering → harvest (all backdated)  

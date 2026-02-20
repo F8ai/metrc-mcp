@@ -137,7 +137,7 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
       // Detect sandbox limitation vs real error
       const isServerError = [e.message, e2.message].some((m) => m?.includes('unexpected error') || m?.includes('HTTP 401'));
       if (isServerError) {
-        log('Note: CO sandbox has known limitations with transfer endpoints (401/500 errors).');
+        log('Note: METRC sandbox has known limitations with transfer endpoints (401/500 errors).');
         log('Transfers may only work when both facilities have full API permissions.');
       }
     }

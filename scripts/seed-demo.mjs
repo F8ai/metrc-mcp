@@ -48,7 +48,9 @@ const FACILITY_MAP = {
     dispensary: 'SF-SBX-CO-24-8002',
   },
   MA: {
+    cultivator: 'SF-SBX-MA-4-3301',
     lab: 'SF-SBX-MA-8-3301',
+    dispensary: 'SF-SBX-MA-9-3301',
   },
 };
 
