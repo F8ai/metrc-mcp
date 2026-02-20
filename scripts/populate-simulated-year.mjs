@@ -36,6 +36,7 @@ const VEG_WEEKS = 10;
 const FLOWER_WEEKS = 8;
 const PLANTS_PER_CYCLE = 2;
 const NUM_CYCLES = 12;
+const RUN_ID = Math.random().toString(36).slice(2, 6); // unique suffix per run
 
 async function main() {
   if (!hasCredentials()) {
@@ -69,6 +70,7 @@ async function main() {
   const types = (await metrcFetch('/locations/v2/types', { licenseNumber: license })).Data || [];
   const plantType = types.find((t) => t.ForPlants === true);
   let plantLocationId = null;
+  let plantLocationName = null;
   if (plantType) {
     try {
       const created = await metrcFetch(
@@ -77,14 +79,19 @@ async function main() {
         { method: 'POST', body: [{ Name: 'Grow Room Sim', LocationTypeId: plantType.Id }] }
       );
       plantLocationId = Array.isArray(created) ? created[0]?.Id : created?.Id ?? plantType.Id;
+      plantLocationName = 'Grow Room Sim';
     } catch (e) {
       const locs = (await metrcFetch('/locations/v2/active', { licenseNumber: license })).Data || [];
-      plantLocationId = locs.find((l) => l.Name && l.Name.includes('Grow'))?.Id ?? locs[0]?.Id;
+      const loc = locs.find((l) => l.Name && l.Name.includes('Grow')) ?? locs[0];
+      plantLocationId = loc?.Id;
+      plantLocationName = loc?.Name;
     }
   }
   const allLocs = (await metrcFetch('/locations/v2/active', { licenseNumber: license })).Data || [];
-  const harvestLocationId = allLocs.find((l) => l.ForHarvests || l.Name?.includes('Processing'))?.Id ?? allLocs[0]?.Id;
-  log('Locations: plant', plantLocationId, '| harvest/drying', harvestLocationId);
+  const harvestLoc = allLocs.find((l) => l.ForHarvests || l.Name?.includes('Processing')) ?? allLocs[0];
+  const harvestLocationId = harvestLoc?.Id;
+  const harvestLocationName = harvestLoc?.Name;
+  log('Locations: plant', plantLocationName, '(', plantLocationId, ') | harvest/drying', harvestLocationName, '(', harvestLocationId, ')');
 
   if (!plantLocationId || !harvestLocationId) {
     console.error('Need plant-capable and harvest locations. Run populate-sandbox first or create in METRC.');
@@ -108,16 +115,17 @@ async function main() {
     const harvestDate = toDate(addWeeks(cycleStart, VEG_WEEKS + FLOWER_WEEKS));
 
     const strain = strains[c % strains.length];
-    const batchName = `SimYear-${strain.Name.replace(/\s/g, '-')}-${plantingDate}`;
+    const batchName = `SimYear-${strain.Name.replace(/\s/g, '-')}-${plantingDate}-${RUN_ID}`;
     const cycleLabels = plantLabels.slice(tagIndex, tagIndex + PLANTS_PER_CYCLE);
     tagIndex += PLANTS_PER_CYCLE;
     if (cycleLabels.length < PLANTS_PER_CYCLE) break;
 
     try {
       const body = cycleLabels.map((label) => ({
-        PlantBatchName: batchName,
+        Name: batchName,
         Type: seedType,
         Count: 1,
+        Location: plantLocationName,
         LocationId: plantLocationId,
         ActualDate: plantingDate,
         PlantLabel: label,
@@ -153,13 +161,11 @@ async function main() {
           method: 'PUT',
           body: toHarvest.map((p) => ({
             HarvestName: harvestName,
-            HarvestDate: harvestDate,
-            Id: p.Id,
-            Label: p.Label ?? undefined,
+            Plant: p.Label,
             Weight: 1,
-            UnitOfMeasure: 'Ounces',
+            UnitOfWeight: 'Ounces',
+            DryingLocation: harvestLocationName,
             ActualDate: harvestDate,
-            DryingLocationId: harvestLocationId,
           })),
         });
         log('  [', harvestDate, '] Harvest:', harvestName);
@@ -197,16 +203,24 @@ async function main() {
     const tag = pkgTags.shift();
     const packageDate = harvest.HarvestDate || harvest.ActualDate || toDate(today);
     try {
+      const itemName = items[0]?.Name;
+      const itemUom = items[0]?.UnitOfMeasureName ?? 'Ounces';
       await metrcFetch('/harvests/v2/packages', { licenseNumber: license }, {
         method: 'POST',
         body: [{
           HarvestId: harvest.Id,
           HarvestName: harvest.Name,
           Tag: tag,
-          LocationId: harvestLocationId,
-          ItemId: itemId,
-          Quantity: 1,
-          UnitOfMeasure: 'Ounces',
+          Location: harvestLocationName,
+          Item: itemName,
+          Weight: 1,
+          UnitOfWeight: itemUom,
+          Ingredients: [{
+            HarvestId: harvest.Id,
+            HarvestName: harvest.Name,
+            Weight: 1,
+            UnitOfWeight: itemUom,
+          }],
           IsProductionBatch: false,
           ProductRequiresRemediation: false,
           ActualDate: packageDate,
