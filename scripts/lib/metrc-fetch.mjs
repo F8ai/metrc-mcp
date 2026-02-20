@@ -90,3 +90,101 @@ export async function metrcFetch(path, params = {}, options = {}) {
 }
 
 export const LICENSE = process.env.METRC_LICENSE || 'SF-SBX-CO-1-8002';
+
+// ---------------------------------------------------------------------------
+// Configurable fetch — used by multi-state seeders
+// ---------------------------------------------------------------------------
+const INTER_REQUEST_DELAY_MS = 200;
+const MAX_RETRIES = 3;
+const INITIAL_BACKOFF_MS = 500;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Create a METRC API fetch function bound to a specific config.
+ *
+ * @param {{ baseUrl: string, vendorKey: string, userKey: string }} config
+ * @returns {(path: string, params?: object, options?: object) => Promise<any>}
+ */
+export function createMetrcFetch(config) {
+  const { baseUrl, vendorKey, userKey } = config;
+  if (!vendorKey || !userKey) {
+    throw new Error('createMetrcFetch requires vendorKey and userKey');
+  }
+
+  const creds = Buffer.from(`${vendorKey}:${userKey}`).toString('base64');
+
+  return async function configuredFetch(path, params = {}, options = {}) {
+    const url = new URL(path, baseUrl);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
+    const init = {
+      method: options.method || 'GET',
+      headers: { Authorization: `Basic ${creds}` },
+    };
+    if (options.body !== undefined) {
+      init.headers['Content-Type'] = 'application/json';
+      init.body = JSON.stringify(options.body);
+    }
+
+    let lastError = null;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        await sleep(INTER_REQUEST_DELAY_MS);
+        const res = await fetch(url.toString(), init);
+        const text = await res.text();
+
+        if (res.ok) {
+          try { return JSON.parse(text); } catch { return text; }
+        }
+
+        // Do not retry 4xx client errors (except 429 rate limit)
+        if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+          throw new Error(text || `HTTP ${res.status}`);
+        }
+
+        lastError = text || `HTTP ${res.status}`;
+      } catch (err) {
+        if (err.message && !err.message.startsWith('HTTP')) {
+          // Network error — retry
+          lastError = err.message;
+        } else {
+          throw err;
+        }
+      }
+
+      if (attempt < MAX_RETRIES - 1) {
+        await sleep(INITIAL_BACKOFF_MS * Math.pow(2, attempt));
+      }
+    }
+
+    throw new Error(lastError || 'Request failed after retries');
+  };
+}
+
+/**
+ * Load .env from a given path (for use by orchestrator scripts).
+ * Does not overwrite existing env vars.
+ */
+export { loadEnvFile };
+
+/**
+ * State-specific METRC sandbox configurations.
+ */
+export function getStateConfig() {
+  return {
+    CO: {
+      label: 'Colorado',
+      baseUrl: 'https://sandbox-api-co.metrc.com',
+      vendorKey: process.env.METRC_VENDOR_API_KEY || '',
+      userKey: process.env.METRC_USER_API_KEY || '',
+    },
+    MA: {
+      label: 'Massachusetts',
+      baseUrl: 'https://sandbox-api-ma.metrc.com',
+      vendorKey: '4csZ4tqRJBvNX7kkXiQbWj45O2c0IOdMhpoircz-ok3H3ZpT',
+      userKey: 'EOyqdLe19nKlbzQYokyEahcTWt8scwnwABANSsT69J0D-0Gr',
+    },
+  };
+}
