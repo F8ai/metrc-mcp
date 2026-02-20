@@ -57,7 +57,7 @@ export async function seedDispensary(api, license, runId) {
   // Get active packages for sale transactions
   const packages = (await api('/packages/v2/active', { licenseNumber: license })).Data || [];
   if (packages.length === 0) {
-    log('Dispensary', 'No active packages found. Skipping sales.');
+    log('Dispensary', 'No active packages found. Skipping sales. (Transfers from cultivator must run first to deliver packages.)');
     return { receiptsCreated: 0, skipped: 0 };
   }
 

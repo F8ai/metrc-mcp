@@ -5,6 +5,10 @@
  * Records lab test results on existing active packages.
  * Creates 4 test profiles: pass-clean, pass-highcbd, fail-metals, fail-micro.
  *
+ * Dynamically discovers lab test type names from the METRC API and maps
+ * generic analyte categories to state-specific names. Falls back to
+ * hardcoded MA-style names if discovery returns nothing useful.
+ *
  * @param {Function} api - Configured metrcFetch function
  * @param {string} license - Facility license number
  * @param {string} runId - Unique run identifier
@@ -14,64 +18,21 @@
 const today = new Date().toISOString().slice(0, 10);
 
 /**
- * Lab test result profiles.
- *
- * Uses generic METRC lab test type names. The sandbox may require
- * state-specific names — if recording fails, the error is logged
- * and the seeder continues.
+ * Generic analyte definitions used to build test profiles.
+ * Each has keywords used to match against discovered lab test type names.
  */
-const LAB_PROFILES = [
-  {
-    label: 'pass-clean',
-    overallPassed: true,
-    results: [
-      { name: 'Total THC (%) Raw Plant Material', value: 22.5 },
-      { name: 'Total CBD (%) Raw Plant Material', value: 0.8 },
-      { name: 'Moisture Content (%) Raw Plant Material', value: 10.5 },
-      { name: 'Water Activity (Aw) Raw Plant Material', value: 0.55 },
-      { name: 'Arsenic (ppm) Raw Plant Material', value: 0 },
-      { name: 'Lead (ppm) Raw Plant Material', value: 0 },
-      { name: 'Total Yeast and Mold (CFU/g) Raw Plant Material', value: 500 },
-      { name: 'E.coli (CFU/g) Raw Plant Material', value: 0 },
-      { name: 'Salmonella (CFU/g) Raw Plant Material', value: 0 },
-    ],
-  },
-  {
-    label: 'pass-highcbd',
-    overallPassed: true,
-    results: [
-      { name: 'Total THC (%) Raw Plant Material', value: 5.2 },
-      { name: 'Total CBD (%) Raw Plant Material', value: 14.8 },
-      { name: 'Moisture Content (%) Raw Plant Material', value: 11.0 },
-      { name: 'Arsenic (ppm) Raw Plant Material', value: 0 },
-      { name: 'Lead (ppm) Raw Plant Material', value: 0 },
-      { name: 'Total Yeast and Mold (CFU/g) Raw Plant Material', value: 200 },
-      { name: 'E.coli (CFU/g) Raw Plant Material', value: 0 },
-    ],
-  },
-  {
-    label: 'fail-metals',
-    overallPassed: false,
-    results: [
-      { name: 'Total THC (%) Raw Plant Material', value: 18.3 },
-      { name: 'Arsenic (ppm) Raw Plant Material', value: 2.5, passed: false },
-      { name: 'Cadmium (ppm) Raw Plant Material', value: 1.8, passed: false },
-      { name: 'Lead (ppm) Raw Plant Material', value: 3.2, passed: false },
-      { name: 'Total Yeast and Mold (CFU/g) Raw Plant Material', value: 300 },
-    ],
-  },
-  {
-    label: 'fail-micro',
-    overallPassed: false,
-    results: [
-      { name: 'Total THC (%) Raw Plant Material', value: 25.1 },
-      { name: 'Moisture Content (%) Raw Plant Material', value: 14.5 },
-      { name: 'Total Yeast and Mold (CFU/g) Raw Plant Material', value: 50000, passed: false },
-      { name: 'E.coli (CFU/g) Raw Plant Material', value: 150, passed: false },
-      { name: 'Salmonella (CFU/g) Raw Plant Material', value: 1, passed: false },
-    ],
-  },
-];
+const ANALYTE_DEFS = {
+  thc:      { keywords: ['total thc'],                   defaultName: 'Total THC (%) Raw Plant Material' },
+  cbd:      { keywords: ['total cbd'],                   defaultName: 'Total CBD (%) Raw Plant Material' },
+  moisture: { keywords: ['moisture content'],             defaultName: 'Moisture Content (%) Raw Plant Material' },
+  water:    { keywords: ['water activity'],               defaultName: 'Water Activity (Aw) Raw Plant Material' },
+  arsenic:  { keywords: ['arsenic'],                      defaultName: 'Arsenic (ppm) Raw Plant Material' },
+  lead:     { keywords: ['lead'],                         defaultName: 'Lead (ppm) Raw Plant Material' },
+  cadmium:  { keywords: ['cadmium'],                      defaultName: 'Cadmium (ppm) Raw Plant Material' },
+  yeast:    { keywords: ['total yeast and mold', 'yeast'],defaultName: 'Total Yeast and Mold (CFU/g) Raw Plant Material' },
+  ecoli:    { keywords: ['e.coli', 'e coli'],             defaultName: 'E.coli (CFU/g) Raw Plant Material' },
+  salm:     { keywords: ['salmonella'],                   defaultName: 'Salmonella (CFU/g) Raw Plant Material' },
+};
 
 function log(prefix, msg, data) {
   const line = data !== undefined
@@ -81,22 +42,110 @@ function log(prefix, msg, data) {
 }
 
 /**
- * Discover the correct lab test type names for a facility.
- * Falls back to the hardcoded profile names if the types endpoint fails.
+ * Discover the correct lab test type names for a facility and build
+ * a mapping from generic analyte key to actual METRC type name.
  */
 async function discoverLabTestTypes(api, license) {
+  const mapping = {};
+
   try {
     const resp = await api('/labtests/v2/types', { licenseNumber: license });
     const types = resp?.Data || resp || [];
     if (Array.isArray(types) && types.length > 0) {
       const names = types.map((t) => t.Name).filter(Boolean);
       log('Lab', `Discovered ${names.length} lab test types`);
-      return names;
+
+      // Match each analyte to the best discovered type name.
+      // Prefer "Raw Plant Material" variants (compatible with plant-based packages).
+      for (const [key, def] of Object.entries(ANALYTE_DEFS)) {
+        const lower = def.keywords.map((k) => k.toLowerCase());
+        const matches = names.filter((n) => {
+          const nl = n.toLowerCase();
+          return lower.some((kw) => nl.includes(kw));
+        });
+        // Prefer Raw Plant Material, then any match, then default
+        const preferred = matches.find((n) => n.includes('Raw Plant Material'))
+          || matches.find((n) => n.includes('Plant Material'))
+          || matches[0];
+        mapping[key] = preferred || def.defaultName;
+      }
+
+      // Log any analytes that fell back to defaults
+      const fallbacks = Object.entries(mapping).filter(([key, name]) => name === ANALYTE_DEFS[key].defaultName);
+      if (fallbacks.length > 0) {
+        log('Lab', `Using default names for: ${fallbacks.map(([k]) => k).join(', ')}`);
+      }
+
+      return mapping;
     }
   } catch (e) {
     log('Lab', 'Lab test types lookup failed:', e.message?.slice(0, 80));
   }
-  return null;
+
+  // Fall back to all defaults
+  for (const [key, def] of Object.entries(ANALYTE_DEFS)) {
+    mapping[key] = def.defaultName;
+  }
+  log('Lab', 'Using all default (MA-style) lab test type names');
+  return mapping;
+}
+
+/**
+ * Build lab test profiles using the discovered type name mapping.
+ */
+function buildProfiles(m) {
+  return [
+    {
+      label: 'pass-clean',
+      overallPassed: true,
+      results: [
+        { name: m.thc, value: 22.5 },
+        { name: m.cbd, value: 0.8 },
+        { name: m.moisture, value: 10.5 },
+        { name: m.water, value: 0.55 },
+        { name: m.arsenic, value: 0 },
+        { name: m.lead, value: 0 },
+        { name: m.yeast, value: 500 },
+        { name: m.ecoli, value: 0 },
+        { name: m.salm, value: 0 },
+      ],
+    },
+    {
+      label: 'pass-highcbd',
+      overallPassed: true,
+      results: [
+        { name: m.thc, value: 5.2 },
+        { name: m.cbd, value: 14.8 },
+        { name: m.moisture, value: 11.0 },
+        { name: m.arsenic, value: 0 },
+        { name: m.lead, value: 0 },
+        { name: m.yeast, value: 200 },
+        { name: m.ecoli, value: 0 },
+      ],
+    },
+    {
+      label: 'fail-metals',
+      overallPassed: false,
+      results: [
+        { name: m.thc, value: 18.3 },
+        { name: m.arsenic, value: 2.5, passed: false },
+        { name: m.cadmium, value: 1.8, passed: false },
+        { name: m.lead, value: 3.2, passed: false },
+        { name: m.yeast, value: 300 },
+      ],
+    },
+    {
+      label: 'fail-micro',
+      overallPassed: false,
+      results: [
+        { name: m.thc, value: 25.1 },
+        { name: m.moisture, value: 14.5 },
+        { name: m.yeast, value: 50000, passed: false },
+        { name: m.ecoli, value: 150, passed: false },
+        { name: m.salm, value: 1, passed: false },
+      ],
+    },
+  ];
 }
 
 /**
@@ -108,14 +157,15 @@ export async function seedLab(api, license, runId) {
   // Get active packages to test
   const packages = (await api('/packages/v2/active', { licenseNumber: license })).Data || [];
   if (packages.length === 0) {
-    log('Lab', 'No active packages found. Skipping lab tests.');
+    log('Lab', 'No active packages found. Skipping lab tests. (Run cultivator seeder first to create packages.)');
     return { tested: 0, passed: 0, failed: 0, skipped: 0 };
   }
 
   log('Lab', `Found ${packages.length} active packages`);
 
-  // Discover available lab test type names (informational)
-  await discoverLabTestTypes(api, license);
+  // Discover available lab test type names and build profiles
+  const typeMapping = await discoverLabTestTypes(api, license);
+  const profiles = buildProfiles(typeMapping);
 
   let tested = 0;
   let passed = 0;
@@ -129,7 +179,7 @@ export async function seedLab(api, license, runId) {
     const label = pkg.Label ?? pkg.PackageLabel;
     if (!label) { skipped++; continue; }
 
-    const profile = LAB_PROFILES[i % LAB_PROFILES.length];
+    const profile = profiles[i % profiles.length];
     const results = profile.results.map((r) => ({
       LabTestTypeName: r.name,
       Quantity: r.value,

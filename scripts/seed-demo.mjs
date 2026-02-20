@@ -20,6 +20,7 @@ import { fileURLToPath } from 'url';
 import { createMetrcFetch, loadEnvFile, getStateConfig } from './lib/metrc-fetch.mjs';
 import { seedCultivator } from './seeders/cultivator.mjs';
 import { seedLab } from './seeders/lab.mjs';
+import { seedTransfers } from './seeders/transfer.mjs';
 import { seedDispensary } from './seeders/dispensary.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -36,8 +37,15 @@ loadEnvFile(join(root, '.env'));
 // will log errors and continue gracefully.
 const FACILITY_MAP = {
   CO: {
-    cultivator: 'SF-SBX-CO-1-8002',
-    dispensary: 'SF-SBX-CO-3-8002',
+    // CO-1/CO-3 (Accelerator) have crippled categories and no ForPlants location types.
+    // CO-21/CO-24 (Retail) have full category support, ForPlants locations, and transfer types.
+    // CO-25 (Retail Testing Lab) can record lab tests but needs packages at the lab.
+    // Note: CO sandbox has broken standalone package creation and transfer endpoints
+    // (server errors). Only harvest-based package flow on CO-21 works reliably.
+    cultivator: 'SF-SBX-CO-21-8002',
+    lab: 'SF-SBX-CO-25-8002',
+    manufacturer: 'SF-SBX-CO-22-8002',
+    dispensary: 'SF-SBX-CO-24-8002',
   },
   MA: {
     lab: 'SF-SBX-MA-8-3301',
@@ -148,6 +156,17 @@ async function seedState(stateKey, config, runId) {
     } catch (e) {
       console.error(`  Lab seeder failed: ${e.message}`);
       results.seeders.lab = { error: e.message };
+    }
+  }
+
+  // --- Transfers (cultivator -> dispensary) ---
+  if (facilityMap.cultivator && facilityMap.dispensary) {
+    console.log(`\n--- Transfers: ${facilityMap.cultivator} -> ${facilityMap.dispensary} ---`);
+    try {
+      results.seeders.transfers = await seedTransfers(api, facilityMap.cultivator, facilityMap.dispensary, runId);
+    } catch (e) {
+      console.error(`  Transfer seeder failed: ${e.message}`);
+      results.seeders.transfers = { error: e.message };
     }
   }
 
