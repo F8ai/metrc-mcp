@@ -103,48 +103,72 @@ async function main() {
   if (!Array.isArray(plantLabels)) plantLabels = [];
   const batchTypes = (await metrcFetch('/plantbatches/v2/types', { licenseNumber: license })).Data || [];
   const seedType = (batchTypes.find((t) => t.Name === 'Seed') || batchTypes[0])?.Name || 'Seed';
-  const cyclesToRun = Math.min(NUM_CYCLES, Math.floor(plantLabels.length / PLANTS_PER_CYCLE));
+  // METRC v2: ONE planting per batch name. Each plant needs 2 tags (planting + growthphase).
+  const TAGS_PER_PLANT = 2;
+  const cyclesToRun = Math.min(NUM_CYCLES, Math.floor(plantLabels.length / (PLANTS_PER_CYCLE * TAGS_PER_PLANT)));
   let tagIndex = 0;
 
-  // --- 2. Grow (seed → vegetative → flowering → harvest) over simulated cycles ---
-  log('--- Grow: planting → vegetative → flowering → harvest ---');
+  // --- 2. Grow (seed → batch→veg → flowering → harvest) over simulated cycles ---
+  log('--- Grow: planting → batch→veg → flowering → harvest ---');
+  log('Plant tags available:', plantLabels.length, '| Cycles to run:', cyclesToRun);
   for (let c = 0; c < cyclesToRun; c++) {
     const cycleStart = addWeeks(today, -WEEKS_AGO_START + c * CYCLE_WEEKS);
     const plantingDate = toDate(cycleStart);
+    const vegDate = toDate(addDays(cycleStart, 1));
     const floweringDate = toDate(addWeeks(cycleStart, VEG_WEEKS));
     const harvestDate = toDate(addWeeks(cycleStart, VEG_WEEKS + FLOWER_WEEKS));
 
     const strain = strains[c % strains.length];
-    const batchName = `SimYear-${strain.Name.replace(/\s/g, '-')}-${plantingDate}-${RUN_ID}`;
-    const cycleLabels = plantLabels.slice(tagIndex, tagIndex + PLANTS_PER_CYCLE);
-    tagIndex += PLANTS_PER_CYCLE;
-    if (cycleLabels.length < PLANTS_PER_CYCLE) break;
+    const cycleGrowthTags = []; // track which tags become tracked plants
 
-    try {
-      const body = cycleLabels.map((label) => ({
-        Name: batchName,
-        Type: seedType,
-        Count: 1,
-        Location: plantLocationName,
-        LocationId: plantLocationId,
-        ActualDate: plantingDate,
-        PlantLabel: label,
-        Strain: strain.Name,
-      }));
-      await metrcFetch('/plantbatches/v2/plantings', { licenseNumber: license }, { method: 'POST', body });
-      log('  [', plantingDate, '] Seed → plants:', batchName);
-    } catch (e) {
-      log('  Plantings failed:', e.message);
-      continue;
+    // Step 1 & 2: Create individual plantings and convert each to vegetative
+    for (let p = 0; p < PLANTS_PER_CYCLE; p++) {
+      const plantTag = plantLabels[tagIndex];
+      const growthTag = plantLabels[tagIndex + 1];
+      tagIndex += TAGS_PER_PLANT;
+      if (!plantTag || !growthTag) break;
+
+      const batchName = `SimYear-${strain.Name.replace(/\s/g, '-')}-${plantingDate}-${RUN_ID}-${c}-${p}`;
+      try {
+        await metrcFetch('/plantbatches/v2/plantings', { licenseNumber: license }, {
+          method: 'POST',
+          body: [{
+            Name: batchName,
+            Type: seedType,
+            Count: 1,
+            Location: plantLocationName,
+            ActualDate: plantingDate,
+            PlantLabel: plantTag,
+            Strain: strain.Name,
+          }],
+        });
+        await metrcFetch('/plantbatches/v2/growthphase', { licenseNumber: license }, {
+          method: 'POST',
+          body: [{
+            Name: batchName,
+            Count: 1,
+            StartingTag: growthTag,
+            GrowthPhase: 'Vegetative',
+            GrowthDate: vegDate,
+            NewLocation: plantLocationName,
+          }],
+        });
+        cycleGrowthTags.push(growthTag);
+      } catch (e) {
+        log('  Plant failed:', e.message);
+      }
     }
+    if (cycleGrowthTags.length === 0) continue;
+    log('  [', plantingDate, '] Seed → Vegetative:', cycleGrowthTags.length, 'plants for', strain.Name);
 
+    // Step 3: Vegetative → Flowering
     const vegetative = (await metrcFetch('/plants/v2/vegetative', { licenseNumber: license })).Data || [];
-    const byLabel = vegetative.filter((p) => cycleLabels.includes(p.Label));
+    const byLabel = vegetative.filter((pl) => cycleGrowthTags.includes(pl.Label));
     if (byLabel.length > 0) {
       try {
         await metrcFetch('/plants/v2/growthphase', { licenseNumber: license }, {
           method: 'PUT',
-          body: byLabel.map((p) => ({ Id: p.Id, GrowthPhase: 'Flowering', ActualDate: floweringDate })),
+          body: byLabel.map((pl) => ({ Id: pl.Id, GrowthPhase: 'Flowering', GrowthDate: floweringDate, NewLocation: plantLocationName })),
         });
         log('  [', floweringDate, '] Vegetative → Flowering:', byLabel.length, 'plants');
       } catch (e) {
@@ -152,16 +176,17 @@ async function main() {
       }
     }
 
+    // Step 4: Harvest flowering plants
     const flowering = (await metrcFetch('/plants/v2/flowering', { licenseNumber: license })).Data || [];
-    const toHarvest = flowering.filter((p) => cycleLabels.includes(p.Label));
-    if (toHarvest.length > 0 && harvestLocationId) {
+    const toHarvest = flowering.filter((pl) => cycleGrowthTags.includes(pl.Label));
+    if (toHarvest.length > 0 && harvestLocationName) {
       try {
-        const harvestName = `Harvest-Sim-${harvestDate}-${c + 1}`;
+        const harvestName = `Harvest-Sim-${harvestDate}-${c + 1}-${RUN_ID}`;
         await metrcFetch('/plants/v2/harvest', { licenseNumber: license }, {
           method: 'PUT',
-          body: toHarvest.map((p) => ({
+          body: toHarvest.map((pl) => ({
             HarvestName: harvestName,
-            Plant: p.Label,
+            Plant: pl.Label,
             Weight: 1,
             UnitOfWeight: 'Ounces',
             DryingLocation: harvestLocationName,

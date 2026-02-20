@@ -12,6 +12,7 @@
 import { metrcFetch, LICENSE, hasCredentials } from './lib/metrc-fetch.mjs';
 
 const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+const RUN_ID = Math.random().toString(36).slice(2, 6); // unique suffix per run
 const log = (msg, data) => (data !== undefined ? console.log(msg, typeof data === 'object' ? JSON.stringify(data).slice(0, 120) : data) : console.log(msg));
 
 async function main() {
@@ -112,8 +113,7 @@ async function main() {
   if (plantLocationName && strains.length >= 1) {
     const tagsResp = await metrcFetch('/tags/v2/plant/available', { licenseNumber: license });
     plantLabels = (tagsResp?.Data ?? tagsResp ?? [])?.map((t) => (typeof t === 'string' ? t : t.Label ?? t))?.filter(Boolean) ?? [];
-    if (Array.isArray(plantLabels)) plantLabels = plantLabels.slice(0, 24);
-    else plantLabels = [];
+    if (!Array.isArray(plantLabels)) plantLabels = [];
     log('Plant tags available:', plantLabels.length);
 
     if (plantLabels.length === 0) {
@@ -122,27 +122,48 @@ async function main() {
       const batchTypes = (await metrcFetch('/plantbatches/v2/types', { licenseNumber: license })).Data || [];
       const seedType = (batchTypes.find((t) => t.Name === 'Seed') || batchTypes[0])?.Name || 'Seed';
 
+      // Each plant needs: 1 unique batch name, 1 planting tag, 1 growthphase tag = 2 tags per plant
+      // METRC v2 allows only ONE planting per batch name
       let tagIndex = 0;
-      for (let i = 0; i < Math.min(12, strains.length) && tagIndex + 2 <= plantLabels.length; i++) {
-        const strain = strains[i];
-        const batchName = `Lifecycle-${strain.Name.replace(/\s/g, '-')}-${today}`;
-        const labels = plantLabels.slice(tagIndex, tagIndex + 2);
-        tagIndex += 2;
+      const TAGS_PER_PLANT = 2;
+      const plantsToCreate = Math.min(12, strains.length, Math.floor(plantLabels.length / TAGS_PER_PLANT));
+      for (let i = 0; i < plantsToCreate; i++) {
+        const strain = strains[i % strains.length];
+        const plantTag = plantLabels[tagIndex];
+        const growthTag = plantLabels[tagIndex + 1];
+        tagIndex += TAGS_PER_PLANT;
+        const batchName = `Lifecycle-${strain.Name.replace(/\s/g, '-')}-${today}-${RUN_ID}-${i}`;
+
         try {
-          const body = labels.map((label) => ({
-            Name: batchName,
-            Type: seedType,
-            Count: 1,
-            Location: plantLocationName,
-            LocationId: plantLocationId,
-            ActualDate: today,
-            PlantLabel: label,
-            Strain: strain.Name,
-          }));
-          await metrcFetch('/plantbatches/v2/plantings', { licenseNumber: license }, { method: 'POST', body });
-          log('Plantings created:', batchName);
+          // Step 1: Create planting (one plant per batch)
+          await metrcFetch('/plantbatches/v2/plantings', { licenseNumber: license }, {
+            method: 'POST',
+            body: [{
+              Name: batchName,
+              Type: seedType,
+              Count: 1,
+              Location: plantLocationName,
+              ActualDate: today,
+              PlantLabel: plantTag,
+              Strain: strain.Name,
+            }],
+          });
+
+          // Step 2: Convert batch to tracked vegetative plant
+          await metrcFetch('/plantbatches/v2/growthphase', { licenseNumber: license }, {
+            method: 'POST',
+            body: [{
+              Name: batchName,
+              Count: 1,
+              StartingTag: growthTag,
+              GrowthPhase: 'Vegetative',
+              GrowthDate: today,
+              NewLocation: plantLocationName,
+            }],
+          });
+          log('Plant created:', batchName, '→ vegetative');
         } catch (e) {
-          log(`Plantings failed for ${strain.Name}:`, e.message);
+          log(`Plant failed for ${strain.Name}:`, e.message);
         }
       }
     }
@@ -155,7 +176,7 @@ async function main() {
     const vegetative = (await metrcFetch('/plants/v2/vegetative', { licenseNumber: license })).Data || [];
     const ids = vegetative.map((p) => p.Id).filter(Boolean);
     if (ids.length > 0) {
-      const changeBody = ids.map((Id) => ({ Id, GrowthPhase: 'Flowering', ActualDate: today }));
+      const changeBody = ids.map((Id) => ({ Id, GrowthPhase: 'Flowering', GrowthDate: today, NewLocation: plantLocationName || harvestLocationName }));
       await metrcFetch('/plants/v2/growthphase', { licenseNumber: license }, { method: 'PUT', body: changeBody });
       log('Moved to flowering:', ids.length, 'plants');
     } else {
