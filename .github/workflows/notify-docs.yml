@@ -19,15 +19,15 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     # Skip trivial commits that never need doc updates.
-    # [skip-docs] is the explicit opt-out. The other prefixes catch routine
-    # housekeeping commits (typos, formatting, deps, CI tweaks, tests).
+    # Only feat: and breaking changes are likely to need doc updates.
     if: >-
       !contains(github.event.head_commit.message, '[skip-docs]') &&
-      !startsWith(github.event.head_commit.message, 'chore(deps)') &&
-      !startsWith(github.event.head_commit.message, 'chore(lint)') &&
+      !startsWith(github.event.head_commit.message, 'chore:') &&
+      !startsWith(github.event.head_commit.message, 'chore(') &&
       !startsWith(github.event.head_commit.message, 'style:') &&
       !startsWith(github.event.head_commit.message, 'test:') &&
-      !startsWith(github.event.head_commit.message, 'ci:')
+      !startsWith(github.event.head_commit.message, 'ci:') &&
+      !startsWith(github.event.head_commit.message, 'revert:')
     steps:
       - name: Get changed files
         id: changes
