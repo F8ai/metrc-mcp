@@ -1,10 +1,10 @@
 {
-  "runId": "dmlupffpv",
-  "timestamp": "2026-02-20T09:45:57.656Z",
+  "runId": "dmlxxx4il",
+  "timestamp": "2026-02-22T16:06:56.554Z",
   "statesSeeded": [
     "MA"
   ],
-  "elapsedSeconds": 22.6,
+  "elapsedSeconds": 20.7,
   "results": [
     {
       "state": "MA",
@@ -102,17 +102,17 @@
       ],
       "seeders": {
         "cultivator": {
-          "strainsTotal": 16,
+          "strainsTotal": 20,
           "plantsPlanted": 4,
           "plantsVegetative": 4,
-          "plantsFlowering": 3,
-          "plantsHarvested": 4,
+          "plantsFlowering": 2,
+          "plantsHarvested": 2,
           "packagesCreated": 8
         },
         "lab": {
-          "tested": 4,
-          "passed": 2,
-          "failed": 2,
+          "tested": 0,
+          "passed": 0,
+          "failed": 0,
           "skipped": 0
         },
         "transfers": {
