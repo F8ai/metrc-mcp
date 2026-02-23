@@ -9,9 +9,17 @@
  * generic analyte categories to state-specific names. Falls back to
  * hardcoded MA-style names if discovery returns nothing useful.
  *
+ * NOTE (confirmed by Metrc support, case #02372700, Feb 2026):
+ *   Only facilities with CanTestPackages=true (lab/testing facility types) can
+ *   call POST /labtests/v2/record. Non-lab facilities get HTTP 401.
+ *   Packages must also be physically present at the lab facility.
+ *
  * @param {Function} api - Configured metrcFetch function
  * @param {string} license - Facility license number
  * @param {string} runId - Unique run identifier
+ * @param {object} [options] - Optional configuration
+ * @param {string} [options.facilityType] - Facility type (e.g. 'Testing Lab', 'Cultivator')
+ * @param {boolean} [options.canTestPackages] - Whether facility has CanTestPackages permission
  * @returns {Promise<object>} Summary of recorded tests
  */
 
@@ -149,10 +157,37 @@ function buildProfiles(m) {
 }
 
 /**
- * Main lab seeder entry point.
+ * Lab facility type names that can record test results.
  */
-export async function seedLab(api, license, runId) {
+const LAB_FACILITY_TYPES = [
+  'testing lab', 'lab', 'research', 'testing',
+  'retail testing lab', 'medical testing lab',
+];
+
+/**
+ * Main lab seeder entry point.
+ *
+ * @param {Function} api - Configured metrcFetch function
+ * @param {string} license - Facility license number
+ * @param {string} runId - Unique run identifier
+ * @param {object} [options] - Optional configuration
+ * @param {string} [options.facilityType] - Facility type name
+ * @param {boolean} [options.canTestPackages] - CanTestPackages flag from METRC API
+ */
+export async function seedLab(api, license, runId, options = {}) {
   log('Lab', `Starting seed (license: ${license}, runId: ${runId})`);
+
+  // Guard: only lab/testing facilities can call POST /labtests/v2/record
+  const { facilityType, canTestPackages } = options;
+  if (canTestPackages === false) {
+    log('Lab', `Skipping: facility does not have CanTestPackages permission (type: ${facilityType || 'unknown'}).`);
+    log('Lab', 'Only Testing Lab facility types can record lab test results (confirmed by Metrc support).');
+    return { tested: 0, passed: 0, failed: 0, skipped: 0 };
+  }
+  if (facilityType && !LAB_FACILITY_TYPES.some((t) => facilityType.toLowerCase().includes(t))) {
+    log('Lab', `Warning: facility type "${facilityType}" may not support lab test recording.`);
+    log('Lab', 'Proceeding anyway — set canTestPackages=false to skip explicitly.');
+  }
 
   // Get active packages to test
   const packages = (await api('/packages/v2/active', { licenseNumber: license })).Data || [];

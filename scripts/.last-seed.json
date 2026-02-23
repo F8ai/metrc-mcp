@@ -1,11 +1,11 @@
 {
-  "runId": "dmlyclxsi",
-  "timestamp": "2026-02-22T22:58:32.493Z",
+  "runId": "dmlzek6ys",
+  "timestamp": "2026-02-23T16:40:50.592Z",
   "statesSeeded": [
     "CO",
     "MA"
   ],
-  "elapsedSeconds": 44.4,
+  "elapsedSeconds": 38.5,
   "results": [
     {
       "state": "CO",
@@ -13,142 +13,226 @@
         {
           "name": "Sandbox Accelerator Cultivation",
           "license": "SF-SBX-CO-1-8002",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Accelerator Manufacturer",
           "license": "SF-SBX-CO-2-8002",
-          "type": ""
+          "type": "Manufacturer",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Accelerator Store",
           "license": "SF-SBX-CO-3-8002",
-          "type": ""
+          "type": "Dispensary",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox CO Off Premises Storage 2",
           "license": "SF-SBX-CO-4-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Hemp Grow",
           "license": "SF-SBX-CO-5-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": true
         },
         {
           "name": "Sandbox Hospitality and Sales",
           "license": "SF-SBX-CO-6-8002",
-          "type": ""
+          "type": "Dispensary",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Marijuana Cultivation",
           "license": "SF-SBX-CO-7-8002",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Marijuana Product Mfg",
           "license": "SF-SBX-CO-8-8002",
-          "type": ""
+          "type": "Manufacturer",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Marijuana Store",
           "license": "SF-SBX-CO-9-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Off Premises Storage",
           "license": "SF-SBX-CO-10-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Testing Lab",
           "license": "SF-SBX-CO-11-8002",
-          "type": ""
+          "type": "Testing Lab",
+          "canTestPackages": true,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MIP",
           "license": "SF-SBX-CO-12-8002",
-          "type": ""
+          "type": "Manufacturer",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MMC Type 1",
           "license": "SF-SBX-CO-13-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MMC Type 2",
           "license": "SF-SBX-CO-14-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MMC Type 3",
           "license": "SF-SBX-CO-15-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MMJ Operator",
           "license": "SF-SBX-CO-16-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MMJ Transporter",
           "license": "SF-SBX-CO-17-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox MMJ Transporter (No Premises)",
           "license": "SF-SBX-CO-18-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox OPC",
           "license": "SF-SBX-CO-19-8002",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox R&D Cultivation",
           "license": "SF-SBX-CO-20-8002",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Retail Cultivation",
           "license": "SF-SBX-CO-21-8002",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Retail MIP",
           "license": "SF-SBX-CO-22-8002",
-          "type": ""
+          "type": "Manufacturer",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Retail Off Premises Storage",
           "license": "SF-SBX-CO-23-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Retail Store",
           "license": "SF-SBX-CO-24-8002",
-          "type": ""
+          "type": "Dispensary",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Retail Testing Lab",
           "license": "SF-SBX-CO-25-8002",
-          "type": ""
+          "type": "Testing Lab",
+          "canTestPackages": true,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox RMJ Operator",
           "license": "SF-SBX-CO-26-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox RMJ Transporter",
           "license": "SF-SBX-CO-27-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox RMJ Transporter (No Premises)",
           "license": "SF-SBX-CO-28-8002",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         }
       ],
       "seeders": {
@@ -156,8 +240,8 @@
           "strainsTotal": 52,
           "plantsPlanted": 4,
           "plantsVegetative": 4,
-          "plantsFlowering": 2,
-          "plantsHarvested": 1,
+          "plantsFlowering": 4,
+          "plantsHarvested": 4,
           "packagesCreated": 8
         },
         "lab": {
@@ -167,8 +251,8 @@
           "skipped": 0
         },
         "transfers": {
-          "transferred": 0,
-          "skipped": 4
+          "transferred": 4,
+          "skipped": 0
         },
         "dispensary": {
           "receiptsCreated": 0,
@@ -182,101 +266,155 @@
         {
           "name": "Sandbox Craft Marijuana Cooperative",
           "license": "SF-SBX-MA-1-3301",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Independent Testing Laboratory",
           "license": "SF-SBX-MA-2-3301",
-          "type": ""
+          "type": "Testing Lab",
+          "canTestPackages": true,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Courier",
           "license": "SF-SBX-MA-3-3301",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Cultivator",
           "license": "SF-SBX-MA-4-3301",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Delivery Operator",
           "license": "SF-SBX-MA-5-3301",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Microbusiness",
           "license": "SF-SBX-MA-6-3301",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Product Manufacturer",
           "license": "SF-SBX-MA-7-3301",
-          "type": ""
+          "type": "Manufacturer",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Research Facility",
           "license": "SF-SBX-MA-8-3301",
-          "type": ""
+          "type": "Testing Lab",
+          "canTestPackages": true,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Retailer",
           "license": "SF-SBX-MA-9-3301",
-          "type": ""
+          "type": "Dispensary",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Marijuana Transporter with Other Existing ME License",
           "license": "SF-SBX-MA-10-3301",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Independent Testing Laboratory",
           "license": "SF-SBX-MA-11-3301",
-          "type": ""
+          "type": "Testing Lab",
+          "canTestPackages": true,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Marijuana Cultivator",
           "license": "SF-SBX-MA-12-3301",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Marijuana Product Manufacturer",
           "license": "SF-SBX-MA-13-3301",
-          "type": ""
+          "type": "Manufacturer",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Medical Marijuana Retailer",
           "license": "SF-SBX-MA-14-3301",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Microbusiness Delivery",
           "license": "SF-SBX-MA-15-3301",
-          "type": ""
+          "type": "Cultivator",
+          "canTestPackages": false,
+          "canGrowPlants": true,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Social Consumption Establishment",
           "license": "SF-SBX-MA-16-3301",
-          "type": ""
+          "type": "Dispensary",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Standards Laboratory",
           "license": "SF-SBX-MA-17-3301",
-          "type": ""
+          "type": "Testing Lab",
+          "canTestPackages": true,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         },
         {
           "name": "Sandbox Third Party Marijuana Transporter",
           "license": "SF-SBX-MA-18-3301",
-          "type": ""
+          "type": "",
+          "canTestPackages": false,
+          "canGrowPlants": false,
+          "canCreateOpeningBalancePackages": false
         }
       ],
       "seeders": {
         "cultivator": {
-          "strainsTotal": 20,
+          "strainsTotal": 26,
           "plantsPlanted": 4,
           "plantsVegetative": 4,
-          "plantsFlowering": 3,
-          "plantsHarvested": 3,
+          "plantsFlowering": 21,
+          "plantsHarvested": 4,
           "packagesCreated": 8
         },
         "lab": {

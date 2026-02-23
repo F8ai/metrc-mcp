@@ -39,9 +39,13 @@ const FACILITY_MAP = {
   CO: {
     // CO-1/CO-3 (Accelerator) have crippled categories and no ForPlants location types.
     // CO-21/CO-24 (Retail) have full category support, ForPlants locations, and transfer types.
-    // CO-25 (Retail Testing Lab) can record lab tests but needs packages at the lab.
-    // Note: CO sandbox has broken standalone package creation and transfer endpoints
-    // (server errors). Only harvest-based package flow on CO-21 works reliably.
+    // CO-25 (Retail Testing Lab) has CanTestPackages=true — only facility that can record lab tests.
+    //
+    // Confirmed by Metrc support (case #02372700, Feb 2026):
+    //   - Standalone package creation (POST /packages/v2/) requires CanCreateOpeningBalancePackages
+    //     (CO Retail facilities don't have this). Use harvest-based packages instead.
+    //   - Transfers are template-only: use POST /transfers/v2/templates/outgoing.
+    //   - Lab test recording requires CanTestPackages=true (testing labs only).
     cultivator: 'SF-SBX-CO-21-8002',
     lab: 'SF-SBX-CO-25-8002',
     manufacturer: 'SF-SBX-CO-22-8002',
@@ -81,16 +85,36 @@ async function discoverFacilities(api) {
     const resp = await api('/facilities/v2/');
     const facilities = resp?.Data || resp || [];
     if (Array.isArray(facilities)) {
-      return facilities.map((f) => ({
-        name: f.Name || f.FacilityName || '',
-        license: f.License?.Number || f.LicenseNumber || f.License || '',
-        type: f.FacilityType?.Name || f.FacilityTypeName || '',
-      }));
+      return facilities.map((f) => {
+        const ft = f.FacilityType || {};
+        return {
+          name: f.Name || f.FacilityName || '',
+          license: f.License?.Number || f.LicenseNumber || f.License || '',
+          type: classifyFacilityType(ft) || ft.Name || f.FacilityTypeName || '',
+          canTestPackages: ft.CanTestPackages === true,
+          canGrowPlants: ft.CanGrowPlants === true,
+          canCreateOpeningBalancePackages: ft.CanCreateOpeningBalancePackages === true,
+        };
+      });
     }
   } catch (e) {
     console.error('  Failed to list facilities:', e.message?.slice(0, 80));
   }
   return [];
+}
+
+/**
+ * Classify facility type from METRC FacilityType flags.
+ * Mirrors classifyFacility() from formul8-metrc-platform/scripts/seed-sandbox.ts.
+ */
+function classifyFacilityType(ft) {
+  if (!ft || typeof ft !== 'object') return '';
+  // Check CanTestPackages first — research facilities can have both CanGrowPlants and CanTestPackages
+  if (ft.CanTestPackages) return 'Testing Lab';
+  if (ft.CanGrowPlants) return 'Cultivator';
+  if (ft.CanInfuseProducts) return 'Manufacturer';
+  if (ft.CanSellToConsumers) return 'Dispensary';
+  return '';
 }
 
 // ---------------------------------------------------------------------------
@@ -140,25 +164,31 @@ async function seedState(stateKey, config, runId) {
   }
 
   // --- Lab ---
+  // Only lab/testing facilities can call POST /labtests/v2/record.
+  // Pass facility type info so the seeder can guard appropriately.
   if (facilityMap.lab) {
+    const labFacility = facilities.find((f) => f.license === facilityMap.lab);
     console.log(`\n--- Lab: ${facilityMap.lab} ---`);
     try {
-      results.seeders.lab = await seedLab(api, facilityMap.lab, runId);
+      results.seeders.lab = await seedLab(api, facilityMap.lab, runId, {
+        facilityType: labFacility?.type || 'Testing Lab',
+        canTestPackages: labFacility?.canTestPackages ?? true,
+      });
     } catch (e) {
       console.error(`  Lab seeder failed: ${e.message}`);
       results.seeders.lab = { error: e.message };
     }
   }
 
-  // --- Lab on cultivator packages (CO has no dedicated lab facility) ---
+  // NOTE: Lab-on-cultivator fallback removed (Feb 2026).
+  // Metrc support confirmed (case #02372700) that only facilities with
+  // CanTestPackages=true can call POST /labtests/v2/record. Running the lab
+  // seeder on a cultivator will always fail with HTTP 401.
   if (facilityMap.cultivator && !facilityMap.lab) {
-    console.log(`\n--- Lab (on cultivator): ${facilityMap.cultivator} ---`);
-    try {
-      results.seeders.lab = await seedLab(api, facilityMap.cultivator, runId);
-    } catch (e) {
-      console.error(`  Lab seeder failed: ${e.message}`);
-      results.seeders.lab = { error: e.message };
-    }
+    console.log('\n--- Lab (on cultivator): SKIPPED ---');
+    console.log('  Cultivator facilities cannot record lab tests (CanTestPackages=false).');
+    console.log('  Add a Testing Lab facility to FACILITY_MAP to enable lab seeding.');
+    results.seeders.lab = { tested: 0, passed: 0, failed: 0, skipped: 0 };
   }
 
   // --- Transfers (cultivator -> dispensary) ---

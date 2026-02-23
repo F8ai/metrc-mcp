@@ -5,7 +5,7 @@ layout: default
 
 # Sandbox Limitations & Facility Selection
 
-Hard-won knowledge from testing the METRC sandbox APIs across Colorado and Massachusetts. This page documents which facilities to use, what endpoints are broken, and what workflows actually work.
+Hard-won knowledge from testing the METRC sandbox APIs across Colorado and Massachusetts. This page documents which facilities to use, what behaviors are expected (confirmed by Metrc support), and what workflows actually work.
 
 ---
 
@@ -30,37 +30,47 @@ The default "Accelerator" facilities (CO-1, CO-3) have crippled capabilities and
 
 ---
 
-## 2. Known Sandbox Bugs
+## 2. API Rules (Confirmed by Metrc Support)
 
-As of 2026-02-20.
+As of 2026-02-20. Confirmed via Metrc support case #02372700.
 
-### Standalone package creation broken (HTTP 500)
+These behaviors were originally logged as "sandbox bugs" but are **expected API behavior** per Metrc support.
 
-`POST /packages/v2/` returns HTTP 500 "unexpected error" on ALL facilities in both CO and MA. This is a sandbox-side bug, not a payload issue. Only harvest-based package creation works:
+### Opening balance packages require `CanCreateOpeningBalancePackages`
 
-```
-POST /harvests/v2/{id}/packages   # Works on cultivator facilities
-POST /packages/v2/                # Broken everywhere
-```
+`POST /packages/v2/` (standalone package creation without a source harvest) is only available on facilities where the `FacilityType.CanCreateOpeningBalancePackages` flag is `true`. Colorado sandbox Retail facilities do not have this flag. This is **not** a sandbox bug — it reflects the facility's license permissions.
 
-### Transfer endpoints broken
+Workaround: Create packages from harvests using `POST /harvests/v2/{id}/packages`, which works on all cultivator facilities.
 
-- `POST /transfers/v2/external/outgoing` returns HTTP 404 on cultivator and store facilities.
-- `POST /transfers/v2/external/incoming` returns HTTP 401 on all non-lab facilities.
-- Lab facilities (CO-11, CO-25) have transfer write permissions but payloads still return HTTP 500.
+**Key flag**: Check `GET /facilities/v2/` response → `FacilityType.CanCreateOpeningBalancePackages`.
 
-Net effect: no working transfer path exists in the CO sandbox.
+### Transfers are template-only via API
 
-### Lab test recording restricted
+The METRC API only supports creating transfer **templates**, not direct transfers.
 
-- `POST /labtests/v2/record` returns HTTP 401 on non-lab facilities.
-- Lab facilities can record tests but only on packages physically present at the lab.
-- Combined with broken transfers and broken standalone package creation, there is no working path to get a package to a CO lab facility and then test it.
-- MA-8 (Research) works because it has pre-seeded packages.
+- `POST /transfers/v2/templates/outgoing` — **correct endpoint** (works)
+- `POST /transfers/v2/external/outgoing` — **does not exist** (HTTP 404)
+- `POST /transfers/v2/external/incoming` — requires `CanTransferFromExternalFacilities=true` (testing labs only in CO sandbox)
 
-### Accelerator facilities return 0 item categories
+Templates must include `Name`, `TransporterFacilityLicenseNumber`, `Destinations[].Transporters[]` (driver info), and `PlannedRoute`.
 
-`GET /items/v2/categories` returns 0 results for Accelerator facilities (CO-1, CO-3). Retail facilities (CO-21, CO-24, etc.) return 13-18 categories.
+**Key flag**: Check `GET /facilities/v2/` response → `FacilityType.CanTransferFromExternalFacilities`.
+
+### Lab test recording restricted to lab licenses
+
+`POST /labtests/v2/record` is only available on facilities where `FacilityType.CanTestPackages=true` (testing labs). Non-lab facilities receive HTTP 401.
+
+Additionally, the package being tested must be physically present at the lab facility (transferred there first). The full workflow requires:
+
+1. Create outgoing transfer template to testing lab
+2. Testing lab receives the transfer
+3. Testing lab records lab tests using their license
+
+**Key flag**: Check `GET /facilities/v2/` response → `FacilityType.CanTestPackages`.
+
+### Accelerator facilities return 0 item categories (under investigation)
+
+`GET /items/v2/categories` returns 0 results for Accelerator facilities (CO-1, CO-3). Retail facilities (CO-21, CO-24, etc.) return 13-18 categories. Metrc is investigating this issue (case open).
 
 ---
 
@@ -73,16 +83,42 @@ Net effect: no working transfer path exists in the CO sandbox.
 - Harvest plants
 - Create packages from harvests (`POST /harvests/v2/{id}/packages`)
 
+**Transfer templates** on CO-21:
+- `POST /transfers/v2/templates/outgoing` creates transfer templates with driver info
+- Templates show up in `/transfers/v2/templates/outgoing` endpoint
+- Templates support multiple destinations and packages per destination
+- Both "Transfer to Testing Facility" and "Unaffiliated" transfer types work
+
 **Lab test recording** on MA-8:
 - MA-8 has pre-seeded packages available for testing
 - `POST /labtests/v2/record` works on packages present at the lab
 - Dynamic lab test type discovery via `GET /labtests/v2/types` with preference for "Raw Plant Material"
 
+**Lab test recording** on CO-25:
+- CO-25 (Retail Testing Lab) has `CanTestPackages=true`
+- Requires packages to be present at the lab (via transfer)
+
 **Read endpoints** work broadly across most facilities for strains, items, locations, plants, harvests, and packages.
 
 ---
 
-## 4. Seed Scripts
+## 4. Key Facility Capability Flags
+
+The `GET /facilities/v2/` response includes `FacilityType` with boolean capability flags. Use `npm run seed:probe` to see all flags for all facilities.
+
+| Flag | Meaning | Who has it |
+|------|---------|------------|
+| `CanGrowPlants` | Can create plant batches and manage cultivation | Cultivators |
+| `CanTestPackages` | Can call `POST /labtests/v2/record` | Testing Labs only |
+| `CanCreateOpeningBalancePackages` | Can create packages without harvest source | Varies by license |
+| `CanTransferFromExternalFacilities` | Can receive external incoming transfers | Testing Labs (CO) |
+| `CanSellToConsumers` | Can create sales receipts | Dispensaries/Stores |
+| `CanInfuseProducts` | Can create infused/manufactured products | Manufacturers |
+| `CanCreateDerivedPackages` | Can create derived packages from existing | Most facility types |
+
+---
+
+## 5. Seed Scripts
 
 | Command | What it does |
 |---------|--------------|
@@ -96,7 +132,7 @@ Net effect: no working transfer path exists in the CO sandbox.
 
 ---
 
-## 5. Facility Map
+## 6. Facility Map
 
 Current `FACILITY_MAP` from `scripts/seed-demo.mjs`:
 

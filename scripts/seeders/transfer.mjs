@@ -2,8 +2,15 @@
 /**
  * Transfer seeder.
  *
- * Transfers packages from one facility (e.g. cultivator) to another
- * (e.g. dispensary) using the METRC transfer API.
+ * Creates outgoing transfer TEMPLATES from one facility (e.g. cultivator) to
+ * another (e.g. dispensary) using the METRC transfer templates API.
+ *
+ * NOTE (confirmed by Metrc support, case #02372700, Feb 2026):
+ *   Transfers are template-only via the API. The correct endpoint is
+ *   POST /transfers/v2/templates/outgoing. The endpoint
+ *   POST /transfers/v2/external/outgoing does NOT exist — it returns 404.
+ *   Templates must include Name, TransporterFacilityLicenseNumber,
+ *   Destinations[].Transporters[] (driver info), and PlannedRoute.
  *
  * @param {Function} api - Configured metrcFetch function
  * @param {string} fromLicense - Shipper facility license number
@@ -41,6 +48,9 @@ async function discoverTransferTypes(api, license) {
 
 /**
  * Main transfer seeder entry point.
+ *
+ * Creates outgoing transfer templates (not direct transfers) because the
+ * METRC API only supports template-based transfers.
  */
 export async function seedTransfers(api, fromLicense, toLicense, runId) {
   log(`Starting (from: ${fromLicense}, to: ${toLicense}, runId: ${runId})`);
@@ -60,9 +70,14 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
     return { transferred: 0, skipped: 0 };
   }
 
-  // Pick a transfer type — prefer one containing "Transfer" or "Wholesale", else first
-  const typeName = transferTypes.find((t) => /transfer/i.test(t))
-    || transferTypes.find((t) => /wholesale/i.test(t))
+  // Pick a transfer type — prefer simple types that don't have extra validation requirements
+  const typeName = transferTypes.find((t) => t === 'Affiliated Transfer')
+    || transferTypes.find((t) => t === 'Unaffiliated Transfer')
+    || transferTypes.find((t) => t === 'Affiliated')
+    || transferTypes.find((t) => t === 'Unaffiliated')
+    || transferTypes.find((t) => /affiliated/i.test(t) && !/patient/i.test(t))
+    || transferTypes.find((t) => /testing/i.test(t))
+    || transferTypes.find((t) => /transfer/i.test(t) && !/patient/i.test(t))
     || transferTypes[0];
   log(`Using transfer type: ${typeName}`);
 
@@ -72,7 +87,12 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
 
   const transferPackages = toTransfer.map((pkg) => {
     const label = pkg.Label ?? pkg.PackageLabel;
-    return { PackageLabel: label, WholesalePrice: 100 };
+    return {
+      PackageLabel: label,
+      WholesalePrice: /unaffiliated/i.test(typeName) ? 100 : undefined,
+      GrossWeight: 50,
+      GrossUnitOfWeightName: 'Grams',
+    };
   }).filter((p) => p.PackageLabel);
 
   if (transferPackages.length === 0) {
@@ -80,21 +100,35 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
     return { transferred: 0, skipped: 0 };
   }
 
-  // Build the transfer payload
+  // Build the transfer template payload
+  // Templates require: Name, TransporterFacilityLicenseNumber,
+  // Destinations[].Transporters[] with driver info, PlannedRoute
   const now = new Date();
-  const departure = now.toISOString();
-  const arrival = new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString(); // +2 hours
+  const departure = now.toISOString().slice(0, 10) + 'T08:00:00.000';
+  const arrival = now.toISOString().slice(0, 10) + 'T14:00:00.000';
 
-  const transferBody = [{
-    ShipperLicenseNumber: fromLicense,
-    TransporterLicenseNumber: fromLicense,
-    TransferTypeName: typeName,
-    EstimatedDepartureDateTime: departure,
-    EstimatedArrivalDateTime: arrival,
+  const templateName = `Seed-${runId}-${Date.now().toString(36).slice(-4)}`;
+
+  const templateBody = [{
+    Name: templateName,
+    TransporterFacilityLicenseNumber: fromLicense,
     Destinations: [{
       RecipientLicenseNumber: toLicense,
       TransferTypeName: typeName,
+      PlannedRoute: 'Route A - Direct',
+      EstimatedDepartureDateTime: departure,
       EstimatedArrivalDateTime: arrival,
+      Transporters: [{
+        TransporterFacilityLicenseNumber: fromLicense,
+        TransporterDirection: 'Outbound',
+        EstimatedDepartureDateTime: departure,
+        EstimatedArrivalDateTime: arrival,
+        DriverName: 'Seed Driver',
+        DriverLicenseNumber: 'DL-000000',
+        VehicleMake: 'Ford',
+        VehicleModel: 'Transit',
+        VehicleLicensePlateNumber: 'SEED-001',
+      }],
       Packages: transferPackages,
     }],
   }];
@@ -102,44 +136,21 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
   let transferred = 0;
   let skipped = 0;
 
-  // Try shipper-side external outgoing endpoint first
+  // Use the template endpoint — the only working transfer creation path
   try {
-    await api('/transfers/v2/external/outgoing', { licenseNumber: fromLicense }, {
+    await api('/transfers/v2/templates/outgoing', { licenseNumber: fromLicense }, {
       method: 'POST',
-      body: transferBody,
+      body: templateBody,
     });
     transferred = transferPackages.length;
-    log(`Created outgoing transfer: ${transferred} packages (${fromLicense} -> ${toLicense})`);
+    log(`Created outgoing transfer template "${templateName}": ${transferred} packages (${fromLicense} -> ${toLicense})`);
   } catch (e) {
-    log('Outgoing transfer failed:', e.message?.slice(0, 100));
+    log('Transfer template creation failed:', e.message?.slice(0, 100));
+    skipped = transferPackages.length;
 
-    // Fallback: try external incoming from receiver side
-    try {
-      const incomingBody = [{
-        ShipperLicenseNumber: fromLicense,
-        TransporterLicenseNumber: fromLicense,
-        TransferTypeName: typeName,
-        EstimatedDepartureDateTime: departure,
-        EstimatedArrivalDateTime: arrival,
-        Packages: transferPackages,
-      }];
-
-      await api('/transfers/v2/external/incoming', { licenseNumber: toLicense }, {
-        method: 'POST',
-        body: incomingBody,
-      });
-      transferred = transferPackages.length;
-      log(`Created incoming transfer: ${transferred} packages (${fromLicense} -> ${toLicense})`);
-    } catch (e2) {
-      log('Incoming transfer also failed:', e2.message?.slice(0, 100));
-      skipped = transferPackages.length;
-
-      // Detect sandbox limitation vs real error
-      const isServerError = [e.message, e2.message].some((m) => m?.includes('unexpected error') || m?.includes('HTTP 401'));
-      if (isServerError) {
-        log('Note: METRC sandbox has known limitations with transfer endpoints (401/500 errors).');
-        log('Transfers may only work when both facilities have full API permissions.');
-      }
+    // Provide actionable guidance
+    if (e.message?.includes('401') || e.message?.includes('403')) {
+      log('Note: This facility may not have transfer permissions. Check FacilityType.CanTransferFromExternalFacilities.');
     }
   }
 

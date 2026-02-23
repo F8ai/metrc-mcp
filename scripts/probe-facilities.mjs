@@ -165,18 +165,57 @@ function extractCount(data) {
 }
 
 // ---------------------------------------------------------------------------
+// Classify facility type from METRC FacilityType boolean flags
+// (mirrors classifyFacility() from formul8-metrc-platform/scripts/seed-sandbox.ts)
+// ---------------------------------------------------------------------------
+function classifyFacility(facilityType) {
+  if (!facilityType || typeof facilityType !== 'object') return '';
+  // Check CanTestPackages first — research facilities can have both CanGrowPlants and CanTestPackages
+  if (facilityType.CanTestPackages) return 'Testing Lab';
+  if (facilityType.CanGrowPlants) return 'Cultivator';
+  if (facilityType.CanInfuseProducts) return 'Manufacturer';
+  if (facilityType.CanSellToConsumers) return 'Dispensary';
+  return 'Other';
+}
+
+// ---------------------------------------------------------------------------
+// Extract all boolean flags from FacilityType
+// ---------------------------------------------------------------------------
+function extractMetrcFlags(facilityType) {
+  if (!facilityType || typeof facilityType !== 'object') return {};
+  const flags = {};
+  for (const [key, value] of Object.entries(facilityType)) {
+    if (typeof value === 'boolean') {
+      flags[key] = value;
+    }
+  }
+  return flags;
+}
+
+// ---------------------------------------------------------------------------
 // Probe a single facility
 // ---------------------------------------------------------------------------
 async function probeFacility(stateKey, config, facility) {
   const license = facility.License?.Number || facility.LicenseNumber || facility.License || '';
   const name = facility.Name || facility.FacilityName || '';
-  const facilityType = facility.FacilityType?.Name || facility.FacilityTypeName || facility.License?.Type || '';
+
+  // Classify facility type from the FacilityType boolean flags
+  const rawFacilityType = facility.FacilityType || {};
+  const facilityType = classifyFacility(rawFacilityType)
+    || rawFacilityType.Name
+    || facility.FacilityTypeName
+    || facility.License?.Type
+    || '';
+
+  // Extract all METRC capability flags from FacilityType
+  const metrcFlags = extractMetrcFlags(rawFacilityType);
 
   const result = {
     name,
     license,
     facilityType,
     state: stateKey,
+    metrcFlags,
     capabilities: {
       canGrow: false,
       canHarvest: false,
@@ -305,6 +344,8 @@ function printSummary(results) {
     { key: 'canSell', label: 'Sell', width: 5 },
     { key: 'canTransfer', label: 'Xfer', width: 5 },
     { key: 'canTest', label: 'Test', width: 5 },
+    { key: 'openBal', label: 'OBal', width: 5 },
+    { key: 'extXfer', label: 'EXfr', width: 5 },
     { key: 'plantTags', label: 'PTags', width: 6 },
     { key: 'pkgTags', label: 'KTags', width: 6 },
   ];
@@ -316,6 +357,7 @@ function printSummary(results) {
 
   for (const r of results) {
     const cap = (val) => (val ? 'Y' : '-');
+    const flag = (key) => (r.metrcFlags?.[key] ? 'Y' : '-');
     const row = {
       state: r.state,
       license: r.license,
@@ -327,6 +369,8 @@ function printSummary(results) {
       canSell: cap(r.capabilities.canSell),
       canTransfer: cap(r.capabilities.canTransfer),
       canTest: cap(r.capabilities.canTest),
+      openBal: flag('CanCreateOpeningBalancePackages'),
+      extXfer: flag('CanTransferFromExternalFacilities'),
       plantTags: String(r.tagCounts.plant),
       pkgTags: String(r.tagCounts.package),
     };
@@ -383,6 +427,17 @@ function printSummary(results) {
   for (const r of results) {
     if (r.locationTypes.length > 0) {
       console.log(`  ${r.state} ${r.license}: ${r.locationTypes.join(', ')}`);
+    }
+  }
+
+  // METRC capability flags per facility
+  console.log('\nMETRC FacilityType Flags:');
+  for (const r of results) {
+    const flags = r.metrcFlags || {};
+    const trueFlags = Object.entries(flags).filter(([, v]) => v).map(([k]) => k);
+    if (trueFlags.length > 0) {
+      console.log(`  ${r.state} ${r.license} (${r.facilityType}):`);
+      console.log(`    ${trueFlags.join(', ')}`);
     }
   }
 
