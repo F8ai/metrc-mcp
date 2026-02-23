@@ -1,11 +1,181 @@
 {
-  "runId": "dmlxxx4il",
-  "timestamp": "2026-02-22T16:06:56.554Z",
+  "runId": "dmlyclxsi",
+  "timestamp": "2026-02-22T22:58:32.493Z",
   "statesSeeded": [
+    "CO",
     "MA"
   ],
-  "elapsedSeconds": 20.7,
+  "elapsedSeconds": 44.4,
   "results": [
+    {
+      "state": "CO",
+      "facilities": [
+        {
+          "name": "Sandbox Accelerator Cultivation",
+          "license": "SF-SBX-CO-1-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Accelerator Manufacturer",
+          "license": "SF-SBX-CO-2-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Accelerator Store",
+          "license": "SF-SBX-CO-3-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox CO Off Premises Storage 2",
+          "license": "SF-SBX-CO-4-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Hemp Grow",
+          "license": "SF-SBX-CO-5-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Hospitality and Sales",
+          "license": "SF-SBX-CO-6-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Medical Marijuana Cultivation",
+          "license": "SF-SBX-CO-7-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Medical Marijuana Product Mfg",
+          "license": "SF-SBX-CO-8-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Medical Marijuana Store",
+          "license": "SF-SBX-CO-9-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Medical Off Premises Storage",
+          "license": "SF-SBX-CO-10-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Medical Testing Lab",
+          "license": "SF-SBX-CO-11-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MIP",
+          "license": "SF-SBX-CO-12-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MMC Type 1",
+          "license": "SF-SBX-CO-13-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MMC Type 2",
+          "license": "SF-SBX-CO-14-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MMC Type 3",
+          "license": "SF-SBX-CO-15-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MMJ Operator",
+          "license": "SF-SBX-CO-16-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MMJ Transporter",
+          "license": "SF-SBX-CO-17-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox MMJ Transporter (No Premises)",
+          "license": "SF-SBX-CO-18-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox OPC",
+          "license": "SF-SBX-CO-19-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox R&D Cultivation",
+          "license": "SF-SBX-CO-20-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Retail Cultivation",
+          "license": "SF-SBX-CO-21-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Retail MIP",
+          "license": "SF-SBX-CO-22-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Retail Off Premises Storage",
+          "license": "SF-SBX-CO-23-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Retail Store",
+          "license": "SF-SBX-CO-24-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox Retail Testing Lab",
+          "license": "SF-SBX-CO-25-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox RMJ Operator",
+          "license": "SF-SBX-CO-26-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox RMJ Transporter",
+          "license": "SF-SBX-CO-27-8002",
+          "type": ""
+        },
+        {
+          "name": "Sandbox RMJ Transporter (No Premises)",
+          "license": "SF-SBX-CO-28-8002",
+          "type": ""
+        }
+      ],
+      "seeders": {
+        "cultivator": {
+          "strainsTotal": 52,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 2,
+          "plantsHarvested": 1,
+          "packagesCreated": 8
+        },
+        "lab": {
+          "tested": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0
+        },
+        "transfers": {
+          "transferred": 0,
+          "skipped": 4
+        },
+        "dispensary": {
+          "receiptsCreated": 0,
+          "skipped": 0
+        }
+      }
+    },
     {
       "state": "MA",
       "facilities": [
@@ -105,8 +275,8 @@
           "strainsTotal": 20,
           "plantsPlanted": 4,
           "plantsVegetative": 4,
-          "plantsFlowering": 2,
-          "plantsHarvested": 2,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
           "packagesCreated": 8
         },
         "lab": {

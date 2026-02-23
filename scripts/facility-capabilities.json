@@ -1,0 +1,1629 @@
+{
+  "generatedAt": "2026-02-22T22:57:01.891Z",
+  "statesProbed": [
+    "CO",
+    "MA"
+  ],
+  "totalFacilities": 46,
+  "facilities": [
+    {
+      "name": "Sandbox Accelerator Cultivation",
+      "license": "SF-SBX-CO-1-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Centralized Processing Hub"
+      ],
+      "tagCounts": {
+        "plant": 1000,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 6
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Accelerator Manufacturer",
+      "license": "SF-SBX-CO-2-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Accelerator Store",
+      "license": "SF-SBX-CO-3-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox CO Off Premises Storage 2",
+      "license": "SF-SBX-CO-4-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Hemp Grow",
+      "license": "SF-SBX-CO-5-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Hospitality and Sales",
+      "license": "SF-SBX-CO-6-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Marijuana Cultivation",
+      "license": "SF-SBX-CO-7-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Centralized Processing Hub",
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 413,
+        "package": 1020
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 3
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Marijuana Product Mfg",
+      "license": "SF-SBX-CO-8-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Marijuana Store",
+      "license": "SF-SBX-CO-9-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Off Premises Storage",
+      "license": "SF-SBX-CO-10-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Testing Lab",
+      "license": "SF-SBX-CO-11-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MIP",
+      "license": "SF-SBX-CO-12-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MMC Type 1",
+      "license": "SF-SBX-CO-13-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MMC Type 2",
+      "license": "SF-SBX-CO-14-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MMC Type 3",
+      "license": "SF-SBX-CO-15-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MMJ Operator",
+      "license": "SF-SBX-CO-16-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 1000,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MMJ Transporter",
+      "license": "SF-SBX-CO-17-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox MMJ Transporter (No Premises)",
+      "license": "SF-SBX-CO-18-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox OPC",
+      "license": "SF-SBX-CO-19-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Centralized Processing Hub",
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 595,
+        "package": 1137
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 2
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox R&D Cultivation",
+      "license": "SF-SBX-CO-20-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 652,
+        "package": 999
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Retail Cultivation",
+      "license": "SF-SBX-CO-21-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Centralized Processing Hub",
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 220,
+        "package": 852
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 51
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Retail MIP",
+      "license": "SF-SBX-CO-22-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 11
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Retail Off Premises Storage",
+      "license": "SF-SBX-CO-23-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Retail Store",
+      "license": "SF-SBX-CO-24-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Retail Testing Lab",
+      "license": "SF-SBX-CO-25-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox RMJ Operator",
+      "license": "SF-SBX-CO-26-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox RMJ Transporter",
+      "license": "SF-SBX-CO-27-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox RMJ Transporter (No Premises)",
+      "license": "SF-SBX-CO-28-8002",
+      "facilityType": "",
+      "state": "CO",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Craft Marijuana Cooperative",
+      "license": "SF-SBX-MA-1-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 994,
+        "package": 1004
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 2
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Independent Testing Laboratory",
+      "license": "SF-SBX-MA-2-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Courier",
+      "license": "SF-SBX-MA-3-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Cultivator",
+      "license": "SF-SBX-MA-4-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 990,
+        "package": 994
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 1,
+        "packages": 8,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 10
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Delivery Operator",
+      "license": "SF-SBX-MA-5-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Microbusiness",
+      "license": "SF-SBX-MA-6-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 1000,
+        "package": 1002
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 2
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Product Manufacturer",
+      "license": "SF-SBX-MA-7-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 5
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Research Facility",
+      "license": "SF-SBX-MA-8-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 1000,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Retailer",
+      "license": "SF-SBX-MA-9-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Marijuana Transporter with Other Existing ME License",
+      "license": "SF-SBX-MA-10-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Locations: HTTP 401",
+        "Location Types: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Independent Testing Laboratory",
+      "license": "SF-SBX-MA-11-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Marijuana Cultivator",
+      "license": "SF-SBX-MA-12-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 966,
+        "package": 973
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 18
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Marijuana Product Manufacturer",
+      "license": "SF-SBX-MA-13-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Medical Marijuana Retailer",
+      "license": "SF-SBX-MA-14-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Microbusiness Delivery",
+      "license": "SF-SBX-MA-15-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": true,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 994,
+        "package": 996
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 2
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Sales: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Social Consumption Establishment",
+      "license": "SF-SBX-MA-16-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": true,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 0
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Standards Laboratory",
+      "license": "SF-SBX-MA-17-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 0
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401",
+        "Package Tags: HTTP 401"
+      ]
+    },
+    {
+      "name": "Sandbox Third Party Marijuana Transporter",
+      "license": "SF-SBX-MA-18-3301",
+      "facilityType": "",
+      "state": "MA",
+      "capabilities": {
+        "canGrow": false,
+        "canHarvest": false,
+        "canPackage": true,
+        "canSell": false,
+        "canTransfer": true,
+        "canTest": true
+      },
+      "locationTypes": [
+        "Default Location Type"
+      ],
+      "tagCounts": {
+        "plant": 0,
+        "package": 1000
+      },
+      "existingData": {
+        "plants": 0,
+        "harvests": 0,
+        "packages": 0,
+        "sales": 0,
+        "transfersIncoming": 0,
+        "transfersOutgoing": 0,
+        "locations": 1
+      },
+      "errors": [
+        "Plants: HTTP 404",
+        "Harvests: HTTP 401",
+        "Sales: HTTP 401",
+        "Plant Tags: HTTP 401"
+      ]
+    }
+  ]
+}
