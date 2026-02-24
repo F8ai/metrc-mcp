@@ -1,11 +1,11 @@
 {
-  "runId": "dmlzek6ys",
-  "timestamp": "2026-02-23T16:40:50.592Z",
+  "runId": "dmm0amdpr",
+  "timestamp": "2026-02-24T07:41:59.849Z",
   "statesSeeded": [
     "CO",
     "MA"
   ],
-  "elapsedSeconds": 38.5,
+  "elapsedSeconds": 258,
   "results": [
     {
       "state": "CO",
@@ -16,6 +16,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -24,6 +25,7 @@
           "type": "Manufacturer",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -32,6 +34,7 @@
           "type": "Dispensary",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -40,6 +43,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -48,6 +52,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": true
         },
         {
@@ -56,6 +61,7 @@
           "type": "Dispensary",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -64,6 +70,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -72,6 +79,7 @@
           "type": "Manufacturer",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -80,6 +88,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -88,6 +97,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -96,6 +106,7 @@
           "type": "Testing Lab",
           "canTestPackages": true,
           "canGrowPlants": false,
+          "canTransferFromExternal": true,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -104,6 +115,7 @@
           "type": "Manufacturer",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -112,6 +124,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -120,6 +133,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -128,6 +142,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -136,6 +151,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -144,6 +160,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -152,6 +169,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -160,6 +178,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -168,6 +187,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -176,6 +196,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -184,6 +205,7 @@
           "type": "Manufacturer",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -192,6 +214,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -200,6 +223,7 @@
           "type": "Dispensary",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -208,6 +232,7 @@
           "type": "Testing Lab",
           "canTestPackages": true,
           "canGrowPlants": false,
+          "canTransferFromExternal": true,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -216,6 +241,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -224,6 +250,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -232,11 +259,12 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         }
       ],
       "seeders": {
-        "cultivator": {
+        "cultivator_0": {
           "strainsTotal": 52,
           "plantsPlanted": 4,
           "plantsVegetative": 4,
@@ -244,19 +272,129 @@
           "plantsHarvested": 4,
           "packagesCreated": 8
         },
+        "cultivator_1": {
+          "strainsTotal": 24,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
+          "packagesCreated": 8
+        },
+        "cultivator_2": {
+          "strainsTotal": 14,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
+          "packagesCreated": 8
+        },
+        "cultivator_3": {
+          "strainsTotal": 14,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
+          "packagesCreated": 8
+        },
+        "labPackages": {
+          "packagesFound": 0,
+          "strategy": "none",
+          "packageLabels": []
+        },
         "lab": {
           "tested": 0,
           "passed": 0,
           "failed": 0,
           "skipped": 0
         },
-        "transfers": {
+        "transfersToLab_0": {
           "transferred": 4,
           "skipped": 0
+        },
+        "transfers_0": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfersToLab_1": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_1": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfersToLab_2": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_2": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfersToLab_3": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_3": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "dispensaryPackages": {
+          "packagesFound": 0,
+          "strategy": "none",
+          "packageLabels": []
         },
         "dispensary": {
           "receiptsCreated": 0,
           "skipped": 0
+        },
+        "activity_cultivator_0": {
+          "adjustments": 4,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_1": {
+          "adjustments": 3,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 0,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_2": {
+          "adjustments": 4,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_3": {
+          "adjustments": 5,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_lab": {
+          "adjustments": 0,
+          "locationChanges": 0,
+          "harvestWaste": 0,
+          "harvestsFinished": 0,
+          "packagesFinished": 0,
+          "remediations": 0
+        },
+        "activity_dispensary": {
+          "adjustments": 0,
+          "locationChanges": 0,
+          "harvestWaste": 0,
+          "harvestsFinished": 0,
+          "packagesFinished": 0,
+          "remediations": 0
         }
       }
     },
@@ -269,6 +407,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -277,6 +416,7 @@
           "type": "Testing Lab",
           "canTestPackages": true,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -285,6 +425,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -293,6 +434,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -301,6 +443,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -309,6 +452,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -317,6 +461,7 @@
           "type": "Manufacturer",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -325,6 +470,7 @@
           "type": "Testing Lab",
           "canTestPackages": true,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -333,6 +479,7 @@
           "type": "Dispensary",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -341,6 +488,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -349,6 +497,7 @@
           "type": "Testing Lab",
           "canTestPackages": true,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -357,6 +506,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -365,6 +515,7 @@
           "type": "Manufacturer",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -373,6 +524,7 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -381,6 +533,7 @@
           "type": "Cultivator",
           "canTestPackages": false,
           "canGrowPlants": true,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -389,6 +542,7 @@
           "type": "Dispensary",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -397,6 +551,7 @@
           "type": "Testing Lab",
           "canTestPackages": true,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         },
         {
@@ -405,31 +560,171 @@
           "type": "",
           "canTestPackages": false,
           "canGrowPlants": false,
+          "canTransferFromExternal": false,
           "canCreateOpeningBalancePackages": false
         }
       ],
       "seeders": {
-        "cultivator": {
+        "cultivator_0": {
           "strainsTotal": 26,
           "plantsPlanted": 4,
           "plantsVegetative": 4,
-          "plantsFlowering": 21,
+          "plantsFlowering": 4,
           "plantsHarvested": 4,
           "packagesCreated": 8
         },
+        "cultivator_1": {
+          "strainsTotal": 23,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
+          "packagesCreated": 8
+        },
+        "cultivator_2": {
+          "strainsTotal": 22,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
+          "packagesCreated": 8
+        },
+        "cultivator_3": {
+          "strainsTotal": 30,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 4,
+          "packagesCreated": 8
+        },
+        "cultivator_4": {
+          "strainsTotal": 22,
+          "plantsPlanted": 4,
+          "plantsVegetative": 4,
+          "plantsFlowering": 3,
+          "plantsHarvested": 3,
+          "packagesCreated": 8
+        },
+        "labPackages": {
+          "packagesFound": 4,
+          "strategy": "existing",
+          "packageLabels": [
+            "AAAFF03000006D0000000037",
+            "AAAFF03000006D0000000038",
+            "AAAFF03000006D0000000039",
+            "AAAFF03000006D0000000040"
+          ]
+        },
         "lab": {
-          "tested": 0,
-          "passed": 0,
-          "failed": 0,
+          "tested": 4,
+          "passed": 2,
+          "failed": 2,
           "skipped": 0
         },
-        "transfers": {
+        "transfersToLab_0": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_0": {
           "transferred": 0,
           "skipped": 4
+        },
+        "transfersToLab_1": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_1": {
+          "transferred": 0,
+          "skipped": 4
+        },
+        "transfersToLab_2": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_2": {
+          "transferred": 0,
+          "skipped": 4
+        },
+        "transfersToLab_3": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_3": {
+          "transferred": 0,
+          "skipped": 4
+        },
+        "transfersToLab_4": {
+          "transferred": 4,
+          "skipped": 0
+        },
+        "transfers_4": {
+          "transferred": 0,
+          "skipped": 4
+        },
+        "dispensaryPackages": {
+          "packagesFound": 0,
+          "strategy": "none",
+          "packageLabels": []
         },
         "dispensary": {
           "receiptsCreated": 0,
           "skipped": 0
+        },
+        "activity_cultivator_0": {
+          "adjustments": 4,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_1": {
+          "adjustments": 5,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_2": {
+          "adjustments": 4,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_3": {
+          "adjustments": 5,
+          "locationChanges": 3,
+          "harvestWaste": 1,
+          "harvestsFinished": 0,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_cultivator_4": {
+          "adjustments": 5,
+          "locationChanges": 3,
+          "harvestWaste": 2,
+          "harvestsFinished": 1,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_lab": {
+          "adjustments": 4,
+          "locationChanges": 3,
+          "harvestWaste": 1,
+          "harvestsFinished": 0,
+          "packagesFinished": 2,
+          "remediations": 0
+        },
+        "activity_dispensary": {
+          "adjustments": 0,
+          "locationChanges": 0,
+          "harvestWaste": 0,
+          "harvestsFinished": 0,
+          "packagesFinished": 0,
+          "remediations": 0
         }
       }
     }

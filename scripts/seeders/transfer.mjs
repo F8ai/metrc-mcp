@@ -56,12 +56,33 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
   log(`Starting (from: ${fromLicense}, to: ${toLicense}, runId: ${runId})`);
 
   // Get active packages on the source facility
-  const packages = (await api('/packages/v2/active', { licenseNumber: fromLicense })).Data || [];
-  if (packages.length === 0) {
+  const allPackages = (await api('/packages/v2/active', { licenseNumber: fromLicense })).Data || [];
+  if (allPackages.length === 0) {
     log('No active packages on source facility. Skipping transfers.');
     return { transferred: 0, skipped: 0 };
   }
-  log(`Found ${packages.length} active packages on source facility`);
+  log(`Found ${allPackages.length} active packages on source facility`);
+
+  // Filter out packages marked as NotSubmitted (MA regulation — packages need
+  // submission/approval before transfer). Also skip packages already in transit.
+  let packages = allPackages.filter((pkg) => {
+    if (pkg.SubmittedDate === null && pkg.SubmittedDateTime === null) return false;
+    if (pkg.IsInTransit === true) return false;
+    return true;
+  });
+
+  if (packages.length === 0) {
+    // Fall back to all packages if the filter was too aggressive (CO doesn't have SubmittedDate)
+    if (allPackages.length > 0 && allPackages[0].SubmittedDate === undefined) {
+      log('No SubmittedDate field — using all packages (likely CO sandbox)');
+      packages = allPackages;
+    } else {
+      log(`All ${allPackages.length} packages are NotSubmitted or in transit. Skipping transfers.`);
+      return { transferred: 0, skipped: 0 };
+    }
+  } else {
+    log(`${packages.length} packages eligible for transfer (${allPackages.length - packages.length} filtered out)`);
+  }
 
   // Discover transfer types
   const transferTypes = await discoverTransferTypes(api, fromLicense);
@@ -145,12 +166,51 @@ export async function seedTransfers(api, fromLicense, toLicense, runId) {
     transferred = transferPackages.length;
     log(`Created outgoing transfer template "${templateName}": ${transferred} packages (${fromLicense} -> ${toLicense})`);
   } catch (e) {
-    log('Transfer template creation failed:', e.message?.slice(0, 100));
-    skipped = transferPackages.length;
+    const errMsg = e.message || '';
 
-    // Provide actionable guidance
-    if (e.message?.includes('401') || e.message?.includes('403')) {
-      log('Note: This facility may not have transfer permissions. Check FacilityType.CanTransferFromExternalFacilities.');
+    // MA-specific: packages in "NotSubmitted" state can't be transferred.
+    // The NotSubmitted flag isn't exposed in GET responses, so we can only
+    // detect it from the transfer creation error. Try with older packages
+    // (which may have been auto-submitted over time).
+    if (errMsg.includes('NotSubmitted')) {
+      log('Packages are NotSubmitted (MA regulation). Trying older packages...');
+      const olderPackages = packages.slice(TARGET).slice(0, TARGET);
+      if (olderPackages.length > 0) {
+        const retryPkgs = olderPackages.map((pkg) => ({
+          PackageLabel: pkg.Label ?? pkg.PackageLabel,
+          WholesalePrice: /unaffiliated/i.test(typeName) ? 100 : undefined,
+          GrossWeight: 50,
+          GrossUnitOfWeightName: 'Grams',
+        })).filter((p) => p.PackageLabel);
+
+        const retryName = `Seed-${runId}-${Date.now().toString(36).slice(-4)}`;
+        const retryBody = JSON.parse(JSON.stringify(templateBody));
+        retryBody[0].Name = retryName;
+        retryBody[0].Destinations[0].Packages = retryPkgs;
+
+        try {
+          await api('/transfers/v2/templates/outgoing', { licenseNumber: fromLicense }, {
+            method: 'POST',
+            body: retryBody,
+          });
+          transferred = retryPkgs.length;
+          log(`Created outgoing transfer template "${retryName}": ${transferred} packages (retry with older pkgs)`);
+        } catch (e2) {
+          log('Retry also failed:', e2.message?.slice(0, 100));
+          log('Note: MA sandbox packages may all be NotSubmitted. This is a state-specific regulation.');
+          skipped = transferPackages.length;
+        }
+      } else {
+        log('No older packages to try. All packages may be NotSubmitted.');
+        skipped = transferPackages.length;
+      }
+    } else {
+      log('Transfer template creation failed:', errMsg.slice(0, 100));
+      skipped = transferPackages.length;
+
+      if (errMsg.includes('401') || errMsg.includes('403')) {
+        log('Note: This facility may not have transfer permissions.');
+      }
     }
   }
 
