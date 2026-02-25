@@ -34,6 +34,7 @@ import { seedTransfers } from './seeders/transfer.mjs';
 import { seedDispensary } from './seeders/dispensary.mjs';
 import { seedPackagesAtFacility } from './seeders/package-seeder.mjs';
 import { seedActivity } from './seeders/activity.mjs';
+import { submitPackagesForTesting } from './seeders/submit-testing.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -198,6 +199,21 @@ async function seedState(stateKey, config, runId) {
     } catch (e) {
       console.error(`  Cultivator seeder failed: ${e.message}`);
       results.seeders[label] = { error: e.message };
+    }
+  }
+
+  // --- Submit Packages for Testing (MA regulation) ---
+  // MA packages start as NotSubmitted and cannot be transferred until submitted
+  // for testing. This step calls POST /packages/v2/testing to transition them.
+  // CO packages don't have this restriction — the seeder is best-effort.
+  for (let ci = 0; ci < cultivators.length; ci++) {
+    const cultivatorLicense = cultivators[ci];
+    console.log(`\n--- Submit for Testing: ${cultivatorLicense} ---`);
+    try {
+      results.seeders[`submitTesting_${ci}`] = await submitPackagesForTesting(api, cultivatorLicense, runId);
+    } catch (e) {
+      console.error(`  Submit for testing failed: ${e.message}`);
+      results.seeders[`submitTesting_${ci}`] = { error: e.message };
     }
   }
 
