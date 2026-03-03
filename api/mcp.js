@@ -61,7 +61,6 @@ export default async function handler(req) {
   if (method === 'tools/call') {
     const name = params?.name;
     const args = params?.arguments ?? {};
-    const license = args.license_number ? ` license=${args.license_number}` : '';
     if (!name) {
       console.log(`[MCP] tools/call → ERROR missing tool name`);
       return jsonResponse({ jsonrpc: jsonrpc || '2.0', id: id ?? 1, error: { code: -32602, message: 'Missing tool name' } }, 400);
@@ -69,14 +68,14 @@ export default async function handler(req) {
     try {
       const text = await executeTool(name, args);
       const resultLen = typeof text === 'string' ? text.length : 0;
-      console.log(`[MCP] tools/call ${name}${license} → OK ${resultLen} chars (${Date.now() - startMs}ms)`);
+      console.log(`[MCP] tools/call ${name} → OK ${resultLen} chars (${Date.now() - startMs}ms)`);
       return jsonResponse({
         jsonrpc: jsonrpc || '2.0',
         id: id ?? 1,
         result: { content: [{ type: 'text', text }] },
       });
     } catch (err) {
-      console.error(`[MCP] tools/call ${name}${license} → ERROR: ${err.message} (${Date.now() - startMs}ms)`);
+      console.error(`[MCP] tools/call ${name} → ERROR (${Date.now() - startMs}ms)`);
       return jsonResponse({
         jsonrpc: jsonrpc || '2.0',
         id: id ?? 1,

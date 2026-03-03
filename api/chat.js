@@ -114,8 +114,8 @@ export default async function handler(req) {
     });
 
     if (!res.ok) {
-      const text = await res.text();
-      return jsonResponse({ error: 'OpenRouter request failed', status: res.status, detail: text }, 502);
+      console.error(`[Chat] OpenRouter request failed: ${res.status}`);
+      return jsonResponse({ error: 'OpenRouter request failed', status: res.status }, 502);
     }
 
     const data = await res.json();
