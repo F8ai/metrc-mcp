@@ -19,7 +19,7 @@ function getCorsHeaders(req) {
   return {
     'Access-Control-Allow-Origin': matched,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
@@ -40,6 +40,15 @@ export default async function handler(req) {
   }
   if (req.method !== 'POST') {
     return jsonResponse({ error: 'Method not allowed' }, 405);
+  }
+
+  // Bearer token auth — opt-in via MCP_API_KEY env var
+  const apiKey = process.env.MCP_API_KEY;
+  if (apiKey) {
+    const auth = req.headers.get('authorization');
+    if (!auth || auth !== `Bearer ${apiKey}`) {
+      return jsonResponse({ error: 'Unauthorized' }, 401);
+    }
   }
 
   let body;
